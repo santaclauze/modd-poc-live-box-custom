@@ -13,6 +13,8 @@ Layers should be customizable by user. UX and intuitiveness is important!
 3. "Handles" can be double clicked to toggle `%` and `px`.
 4. Holding `shift` while draging a "handle" will also increase the opposite side with the same amount.
 5. If a `Layer` contains extra `Layers`, the gutter are also customizable (should update all gutters equally)
+6. Global 4px snap to grid, prevent snap to grid while holding alt key (does this mean drag and drop?)
+
 
 
 
