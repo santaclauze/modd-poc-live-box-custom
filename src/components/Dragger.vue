@@ -13,6 +13,8 @@ export default {
   name: "Dragger",
   props: {
     direction: String,
+    parentHeight: Number,
+    parentWidth: Number,
   },
   data: () => ({
     positions: {
@@ -25,9 +27,6 @@ export default {
   methods: {
     dragMouseDown: function (event) {
       event.preventDefault()
-      // get the mouse cursor position at startup:
-      console.log(this.direction)
-
       if(['top', 'bottom'].includes(this.direction)) {
         this.positions.clientY = event.clientY
         document.onmousemove = this.elementDrag
@@ -41,20 +40,48 @@ export default {
     },
     elementDrag: function (event) {
       event.preventDefault()
-      if(['top', 'bottom'].includes(this.direction)) {
+      const maxPosition = {
+        top: this.parentHeight - 10 - this.$refs.draggableContainer.offsetHeight,
+        right: this.parentWidth - 10 - this.$refs.draggableContainer.offsetWidth,
+        bottom: 10,
+        left: 10
+      }
+
+      if(this.direction === 'top') {
         this.positions.movementY = this.positions.clientY - event.clientY
         this.positions.clientY = event.clientY
-        console.log(this.$refs.draggableContainer.style.top)
-        if((this.$refs.draggableContainer.offsetTop) < 0) {
-          this.$refs.draggableContainer.style.top = 0;
-          this.$refs.draggableContainer.style.bottom = 0;
-        }
         this.$refs.draggableContainer.style.top = (this.$refs.draggableContainer.offsetTop - this.positions.movementY) + 'px'
+        if(this.$refs.draggableContainer.offsetTop - this.positions.movementY < maxPosition.bottom) {
+          this.$refs.draggableContainer.style.top = maxPosition.bottom + 'px'
+        }
+        // TODO: define how much on the inside can draggers go
+        // if(maxPositionBottom) {
+        //   this.$refs.draggableContainer.style.top = maxPosition.top + 'px'
+        // }
       }
-      if(['left', 'right'].includes(this.direction)) {
+      if(this.direction === 'bottom') {
+        this.positions.movementY = this.positions.clientY - event.clientY
+        this.positions.clientY = event.clientY
+        this.$refs.draggableContainer.style.top = (this.$refs.draggableContainer.offsetTop - this.positions.movementY) + 'px'
+        if(maxPosition.top < this.$refs.draggableContainer.offsetTop) {
+          this.$refs.draggableContainer.style.top = maxPosition.top + 'px'
+        }
+      }
+      if(this.direction === 'left') {
         this.positions.movementX = this.positions.clientX - event.clientX
         this.positions.clientX = event.clientX
         this.$refs.draggableContainer.style.left = (this.$refs.draggableContainer.offsetLeft - this.positions.movementX) + 'px'
+        if((this.$refs.draggableContainer.offsetLeft - this.positions.movementX) < maxPosition.left) {
+          this.$refs.draggableContainer.style.left = maxPosition.left + 'px'
+        }
+      }
+      if(this.direction === 'right') {
+        this.positions.movementX = this.positions.clientX - event.clientX
+        this.positions.clientX = event.clientX
+        this.$refs.draggableContainer.style.left = (this.$refs.draggableContainer.offsetLeft - this.positions.movementX) + 'px'
+        if(maxPosition.right < this.$refs.draggableContainer.offsetLeft ) {
+          this.$refs.draggableContainer.style.left = maxPosition.right + 'px'
+        }
       }
     },
     closeDragElement () {

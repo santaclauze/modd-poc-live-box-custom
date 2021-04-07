@@ -1,17 +1,15 @@
 <template>
-  <div class="customizer-wrapper" @mouseover="mouseEnter($event)">
+  <div class="customizer-wrapper" ref="draggableContainer">
     <slot></slot>
     <Dragger
-      direction="top"
-    />
-    <Dragger
-      direction="left"
-    />
-    <Dragger
-      direction="bottom"
-    />
-    <Dragger
-      direction="right"
+        v-for="direction in directions"
+        :direction="direction"
+        :key="direction"
+        :parentHeight="slotHeight"
+        :parentWidth="slotWidth"
+        :class="{'test' : isDraggerClicked}"
+        @mousedown="handleMouseDown"
+        @mouseup="handleMouseUp"
     />
     <div class="mock-padding-box" v-if="isDraggerClicked"/>
   </div>
@@ -28,18 +26,23 @@ export default Vue.extend({
   },
   data: () => ({
     isDraggerClicked: false,
+    directions: ['top', 'right', 'bottom', 'left'],
+    slotHeight: 0,
+    slotWidth: 0,
   }),
+  mounted() {
+    this.$nextTick(() => {
+      this.slotHeight = this.$refs.draggableContainer.clientHeight;
+      this.slotWidth = this.$refs.draggableContainer.clientWidth;
+    })
+  },
   methods: {
-    mouseEnter() {
-
-    },
-    handleMouseDown() {
-      this.isDraggerClicked = true;
-      console.log(this.isDraggerClicked)
+    handleMouseDown: function () {
+      console.log('?')
+      this.set(this.isDraggerClicked = true);
     },
     handleMouseUp() {
-      this.isDraggerClicked = false;
-      console.log(this.isDraggerClicked)
+      this.set(this.isDraggerClicked = false);
     }
   },
 })
@@ -50,9 +53,14 @@ export default Vue.extend({
   position: relative;
 }
 
-.customizer-wrapper:hover .dragger {
+.dragger.test {
+  visibility: visible;
   background: blue;
+}
 
+.customizer-wrapper:hover .dragger {
+  visibility: visible;
+  background: blue;
 }
 
 .customizer-wrapper:hover .dragger:hover {
@@ -66,7 +74,7 @@ export default Vue.extend({
   left: 0;
   right: 0;
   bottom: 90%;
-  border: 1px solid dodgerblue;
+  border: 1px solid red;
   background-color: lightskyblue;
   z-index: 900;
 }
