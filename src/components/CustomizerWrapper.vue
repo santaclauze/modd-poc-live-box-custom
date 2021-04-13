@@ -1,32 +1,47 @@
 <template>
   <div class="customizer-wrapper" ref="draggableContainer">
     <slot></slot>
+    <PaddingSizeViewer
+        v-for="direction in directions"
+        :direction="direction"
+        :key="'viewer-'+ direction"
+        :activePaddingSizeViewer="activePaddingSizeViewer"
+        :parentHeight="slotHeight"
+        :parentWidth="slotWidth"
+    />
     <Dragger
         v-for="direction in directions"
         :direction="direction"
-        :key="direction"
+        :key="'dragger-'+ direction"
         :parentHeight="slotHeight"
         :parentWidth="slotWidth"
         :class="{'test' : isDraggerClicked}"
         @mousedown="handleMouseDown"
         @mouseup="handleMouseUp"
+        @update-padding-viewer-size="updatePaddingViewerSize"
+        @update-active-padding-viewer-direction="updateActivePaddingViewer"
     />
-    <div class="mock-padding-box" v-if="isDraggerClicked"/>
   </div>
 </template>
 
 <script>
 import Vue from "vue";
 import Dragger from './Dragger';
+import PaddingSizeViewer from './PaddingSizeViewer';
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
   components: {
     Dragger,
+    PaddingSizeViewer,
   },
   data: () => ({
     isDraggerClicked: false,
     directions: ['top', 'right', 'bottom', 'left'],
+    activePaddingSizeViewer: {
+      direction: [],
+      size: '',
+    },
     slotHeight: 0,
     slotWidth: 0,
   }),
@@ -37,8 +52,16 @@ export default Vue.extend({
     })
   },
   methods: {
+    updateActivePaddingViewer: function (direction) {
+      const index = this.activePaddingSizeViewer.direction.findIndex(v => v === direction)
+      if (index >= 0)
+        this.activePaddingSizeViewer.direction.splice(index, 1)
+      if(index === -1) this.activePaddingSizeViewer.direction.push(direction)
+    },
+    updatePaddingViewerSize: function (size) {
+      this.$set(this.activePaddingSizeViewer, 'size', size)
+    },
     handleMouseDown: function () {
-      console.log('?')
       this.set(this.isDraggerClicked = true);
     },
     handleMouseUp() {

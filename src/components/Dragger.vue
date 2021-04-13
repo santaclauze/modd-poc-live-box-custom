@@ -3,7 +3,8 @@
     ref="draggableContainer"
     id="draggable-container"
     class="dragger"
-    @mousedown="dragMouseDown"
+    @mouseup="handleMouseUp(direction)"
+    @mousedown="dragMouseDown(direction, $event)"
     :class="[direction + '-dragger']"
   />
 </template>
@@ -22,18 +23,28 @@ export default {
       clientY: undefined,
       movementX: 0,
       movementY: 0
-    }
+    },
   }),
   methods: {
-    dragMouseDown: function (event) {
+    handleMouseUp: function (direction) {
+      this.$emit('update-active-padding-viewer-direction', direction)
+      // remove size to avoid displaying viewer when unwanted
+      this.$emit('update-padding-viewer-size', 0)
+    },
+    dragMouseDown: function (direction, event) {
       event.preventDefault()
+      this.$emit('update-active-padding-viewer-direction', direction)
       if(['top', 'bottom'].includes(this.direction)) {
         this.positions.clientY = event.clientY
+        // make sure that onClick viewer displays the right side straight away
+        this.$emit('update-padding-viewer-size', this.$refs.draggableContainer.offsetTop - this.positions.movementY)
         document.onmousemove = this.elementDrag
         document.onmouseup = this.closeDragElement
       }
       if(['left', 'right'].includes(this.direction)) {
         this.positions.clientX = event.clientX
+        // make sure that onClick viewer displays the right side straight away
+        this.$emit('update-padding-viewer-size', this.$refs.draggableContainer.offsetLeft - this.positions.movementX)
         document.onmousemove = this.elementDrag
         document.onmouseup = this.closeDragElement
       }
@@ -50,19 +61,19 @@ export default {
       if(this.direction === 'top') {
         this.positions.movementY = this.positions.clientY - event.clientY
         this.positions.clientY = event.clientY
-        this.$refs.draggableContainer.style.top = (this.$refs.draggableContainer.offsetTop - this.positions.movementY) + 'px'
+        const styleTop = (this.$refs.draggableContainer.offsetTop - this.positions.movementY)
+        this.$refs.draggableContainer.style.top = styleTop + 'px'
+        this.$emit('update-padding-viewer-size', styleTop)
         if(this.$refs.draggableContainer.offsetTop - this.positions.movementY < maxPosition.bottom) {
           this.$refs.draggableContainer.style.top = maxPosition.bottom + 'px'
         }
-        // TODO: define how much on the inside can draggers go
-        // if(maxPositionBottom) {
-        //   this.$refs.draggableContainer.style.top = maxPosition.top + 'px'
-        // }
       }
       if(this.direction === 'bottom') {
         this.positions.movementY = this.positions.clientY - event.clientY
         this.positions.clientY = event.clientY
-        this.$refs.draggableContainer.style.top = (this.$refs.draggableContainer.offsetTop - this.positions.movementY) + 'px'
+        const styleTop = (this.$refs.draggableContainer.offsetTop - this.positions.movementY)
+        this.$refs.draggableContainer.style.top = styleTop + 'px'
+        this.$emit('update-padding-viewer-size', styleTop)
         if(maxPosition.top < this.$refs.draggableContainer.offsetTop) {
           this.$refs.draggableContainer.style.top = maxPosition.top + 'px'
         }
@@ -70,7 +81,9 @@ export default {
       if(this.direction === 'left') {
         this.positions.movementX = this.positions.clientX - event.clientX
         this.positions.clientX = event.clientX
-        this.$refs.draggableContainer.style.left = (this.$refs.draggableContainer.offsetLeft - this.positions.movementX) + 'px'
+        const styleLeft = (this.$refs.draggableContainer.offsetLeft - this.positions.movementX)
+        this.$refs.draggableContainer.style.left = styleLeft + 'px'
+        this.$emit('update-padding-viewer-size', styleLeft)
         if((this.$refs.draggableContainer.offsetLeft - this.positions.movementX) < maxPosition.left) {
           this.$refs.draggableContainer.style.left = maxPosition.left + 'px'
         }
@@ -78,7 +91,9 @@ export default {
       if(this.direction === 'right') {
         this.positions.movementX = this.positions.clientX - event.clientX
         this.positions.clientX = event.clientX
-        this.$refs.draggableContainer.style.left = (this.$refs.draggableContainer.offsetLeft - this.positions.movementX) + 'px'
+        const styleLeft = (this.$refs.draggableContainer.offsetLeft - this.positions.movementX)
+        this.$refs.draggableContainer.style.left = styleLeft + 'px'
+        this.$emit('update-padding-viewer-size', styleLeft)
         if(maxPosition.right < this.$refs.draggableContainer.offsetLeft ) {
           this.$refs.draggableContainer.style.left = maxPosition.right + 'px'
         }
