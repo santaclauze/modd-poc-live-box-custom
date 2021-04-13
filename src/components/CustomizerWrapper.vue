@@ -1,6 +1,6 @@
 <template>
   <div class="customizer-wrapper" ref="draggableContainer">
-    <slot></slot>
+    <div class="slot-wrapper" :style="[styles]"><slot></slot></div>
     <PaddingSizeViewer
         v-for="direction in directions"
         :direction="direction"
@@ -68,12 +68,23 @@ export default Vue.extend({
       this.set(this.isDraggerClicked = false);
     }
   },
+  computed: {
+    styles: function() {
+      return {
+        paddingTop: this.activePaddingSizeViewer.size + 'px',
+      };
+    }
+  },
 })
 </script>
 
 <style scoped>
+.slot-wrapper {
+  display: flex;
+}
 .customizer-wrapper {
   position: relative;
+  display: flex;
 }
 
 .dragger.test {
