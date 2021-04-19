@@ -1,6 +1,6 @@
 <template>
-  <div class="customizer-wrapper" ref="draggableContainer">
-    <div class="slot-wrapper" :style="[styles]"><slot></slot></div>
+  <div class="customizer-wrapper">
+    <div class="slot-wrapper" ref="draggableContainer" :style="[styles]"><Test /></div>
     <PaddingSizeViewer
         v-for="direction in directions"
         :direction="direction"
@@ -27,11 +27,13 @@
 <script>
 import Vue from "vue";
 import Dragger from './Dragger';
+import Test from './Test';
 import PaddingSizeViewer from './PaddingSizeViewer';
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
   components: {
+    Test,
     Dragger,
     PaddingSizeViewer,
   },
@@ -69,10 +71,15 @@ export default Vue.extend({
     }
   },
   computed: {
-    styles: function() {
-      return {
-        paddingTop: this.activePaddingSizeViewer.size + 'px',
-      };
+    styles() {
+      console.log(this.activePaddingSizeViewer)
+      const styles = {
+        paddingTop: this.activePaddingSizeViewer.direction.includes('top') && this.activePaddingSizeViewer.size + 'px',
+        paddingBottom: this.activePaddingSizeViewer.direction.includes('bottom') && (this.slotHeight - this.activePaddingSizeViewer.size) + 'px',
+        paddingRight: this.activePaddingSizeViewer.direction.includes('right') && (this.slotWidth -this.activePaddingSizeViewer.size) + 'px',
+        paddingLeft: this.activePaddingSizeViewer.direction.includes('left') && this.activePaddingSizeViewer.size + 'px',
+      }
+      return styles;
     }
   },
 })
@@ -82,14 +89,13 @@ export default Vue.extend({
 .slot-wrapper {
   display: flex;
 }
+
 .customizer-wrapper {
   position: relative;
   display: flex;
-}
-
-.dragger.test {
-  visibility: visible;
-  background: blue;
+  height: 500px;
+  width: 600px;
+  border: 1px solid grey;
 }
 
 .customizer-wrapper:hover .dragger {

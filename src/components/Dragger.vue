@@ -6,6 +6,7 @@
     @mouseup="handleMouseUp(direction)"
     @mousedown="dragMouseDown(direction, $event)"
     :class="[direction + '-dragger']"
+    :style="draggerStyles"
   />
 </template>
 
@@ -25,11 +26,55 @@ export default {
       movementY: 0
     },
   }),
+  computed: {
+    draggerStyles() {
+      let styles = {};
+      if(['top', 'bottom'].includes(this.direction)) {
+        styles = {
+          height: '7px',
+          width: this.parentWidth / 4 + 'px',
+        }
+        if(this.direction === 'top') {
+          return {
+            ...styles,
+            top: '10px',
+            left: ((this.parentWidth / 2) - (this.parentWidth / 8))+ 'px'
+          }
+        }
+        if(this.direction === 'bottom') {
+          return {
+            ...styles,
+            bottom: '10px',
+            left: ((this.parentWidth / 2) - (this.parentWidth / 8))+ 'px'
+          }
+        }
+      }
+      if(['left', 'right'].includes(this.direction)) {
+        styles = {
+          height: this.parentHeight / 4 + 'px',
+          width: '7px',
+        }
+        if(this.direction === 'right') {
+          return {
+            ...styles,
+            right: '10px',
+            top: ((this.parentHeight / 2) - (this.parentHeight / 8))+ 'px'
+          }
+        }
+        if(this.direction === 'left') {
+          return {
+            ...styles,
+            left: '10px',
+            top: ((this.parentHeight / 2) - (this.parentHeight / 8))+ 'px',
+          }
+        }
+      }
+      return styles
+    }
+  },
   methods: {
     handleMouseUp: function (direction) {
       this.$emit('update-active-padding-viewer-direction', direction)
-      // remove size to avoid displaying viewer when unwanted
-      this.$emit('update-padding-viewer-size', 0)
     },
     dragMouseDown: function (direction, event) {
       event.preventDefault()
@@ -113,35 +158,6 @@ export default {
   border-radius: 50px;
   position: absolute;
   z-index: 1000;
-}
-
-
-.dragger.top-dragger {
-  top: 10px;
-  left: 40%;
-  width: 100px;
-  height: 5px;
-}
-
-.dragger.right-dragger {
-  right: 10px;
-  top: 40%;
-  width: 5px;
-  height: 100px;
-}
-
-.dragger.bottom-dragger {
-  bottom: 10px;
-  left: 40%;
-  width: 100px;
-  height: 5px;
-}
-
-.dragger.left-dragger {
-  left: 10px;
-  top: 40%;
-  width: 5px;
-  height: 100px;
 }
 
 

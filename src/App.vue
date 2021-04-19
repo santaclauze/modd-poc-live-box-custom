@@ -1,21 +1,17 @@
 <template>
   <div id="app">
-    <CustomizerWrapper>
-      <Test />
-    </CustomizerWrapper>
+    <CustomizerWrapper />
   </div>
 </template>
 
 <script>
 
 
-import Test from "@/components/Test";
 import CustomizerWrapper from "@/components/CustomizerWrapper";
 
 export default {
   name: 'App',
   components: {
-    Test,
     CustomizerWrapper,
   }
 }
