@@ -1,12 +1,12 @@
 <template>
   <div
-    ref="draggableContainer"
-    id="draggable-container"
-    class="dragger"
-    @mouseup="handleMouseUp(direction)"
-    @mousedown="dragMouseDown(direction, $event)"
-    :class="[direction + '-dragger']"
-    :style="draggerStyles"
+      ref="draggableContainer"
+      id="draggable-container"
+      class="dragger"
+      @mouseup="handleMouseUp(direction)"
+      @mousedown="dragMouseDown(direction, $event)"
+      :class="[direction + '-dragger']"
+      :style="draggerStyles"
   />
 </template>
 
@@ -30,42 +30,46 @@ export default {
     draggerStyles() {
       let styles = {};
       if(['top', 'bottom'].includes(this.direction)) {
+        // dagger basic styles for top and bottom
         styles = {
           height: '7px',
           width: this.parentWidth / 4 + 'px',
+          left: this.makeDraggerSize(this.parentWidth),
         }
+        // dagger position top
         if(this.direction === 'top') {
           return {
             ...styles,
+            // top position of top dragger
             top: '10px',
-            left: ((this.parentWidth / 2) - (this.parentWidth / 8))+ 'px'
           }
         }
+        // dagger position bottom
         if(this.direction === 'bottom') {
           return {
             ...styles,
             bottom: '10px',
-            left: ((this.parentWidth / 2) - (this.parentWidth / 8))+ 'px'
           }
         }
       }
       if(['left', 'right'].includes(this.direction)) {
+        // dagger basic styles for left and right
         styles = {
           height: this.parentHeight / 4 + 'px',
           width: '7px',
+          top: this.makeDraggerSize(this.parentHeight),
         }
+        // dagger position
         if(this.direction === 'right') {
           return {
             ...styles,
             right: '10px',
-            top: ((this.parentHeight / 2) - (this.parentHeight / 8))+ 'px'
           }
         }
         if(this.direction === 'left') {
           return {
             ...styles,
             left: '10px',
-            top: ((this.parentHeight / 2) - (this.parentHeight / 8))+ 'px',
           }
         }
       }
@@ -73,28 +77,33 @@ export default {
     }
   },
   methods: {
+    makeDraggerSize: function (parentSize) {
+      return ((parentSize / 2) - (parentSize / 8))+ 'px'
+    },
     handleMouseUp: function (direction) {
+      // remove direction from parent
       this.$emit('update-active-padding-viewer-direction', direction)
     },
     dragMouseDown: function (direction, event) {
       event.preventDefault()
+      // send direction to parent
       this.$emit('update-active-padding-viewer-direction', direction)
       if(['top', 'bottom'].includes(this.direction)) {
         this.positions.clientY = event.clientY
         // make sure that onClick viewer displays the right side straight away
         this.$emit('update-padding-viewer-size', this.$refs.draggableContainer.offsetTop - this.positions.movementY)
-        document.onmousemove = this.elementDrag
+        document.onmousemove = this.elementDragMovement
         document.onmouseup = this.closeDragElement
       }
       if(['left', 'right'].includes(this.direction)) {
         this.positions.clientX = event.clientX
         // make sure that onClick viewer displays the right side straight away
         this.$emit('update-padding-viewer-size', this.$refs.draggableContainer.offsetLeft - this.positions.movementX)
-        document.onmousemove = this.elementDrag
+        document.onmousemove = this.elementDragMovement
         document.onmouseup = this.closeDragElement
       }
     },
-    elementDrag: function (event) {
+    elementDragMovement: function (event) {
       event.preventDefault()
       const maxPosition = {
         top: this.parentHeight - 10 - this.$refs.draggableContainer.offsetHeight,
@@ -160,12 +169,4 @@ export default {
   z-index: 1000;
 }
 
-
-/*#draggable-container {*/
-/*  position: absolute;*/
-/*  z-index: 9;*/
-/*}*/
-/*#draggable-header {*/
-/*  z-index: 10;*/
-/*}*/
 </style>

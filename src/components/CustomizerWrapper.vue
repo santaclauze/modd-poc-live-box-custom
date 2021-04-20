@@ -1,6 +1,6 @@
 <template>
-  <div class="customizer-wrapper">
-    <div class="slot-wrapper" ref="draggableContainer" :style="[styles]"><Test /></div>
+  <div class="customizer-wrapper" ref="draggableContainer">
+    <div class="slot-wrapper" :style="[styles]"><DivToBeTested /></div>
     <PaddingSizeViewer
         v-for="direction in directions"
         :direction="direction"
@@ -27,13 +27,15 @@
 <script>
 import Vue from "vue";
 import Dragger from './Dragger';
-import Test from './Test';
+import DivToBeTested from './DivToBeTested';
+// import TextToBeTested from './TextToBeTested';
 import PaddingSizeViewer from './PaddingSizeViewer';
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
   components: {
-    Test,
+    DivToBeTested,
+    // TextToBeTested,
     Dragger,
     PaddingSizeViewer,
   },
@@ -88,6 +90,7 @@ export default Vue.extend({
 <style scoped>
 .slot-wrapper {
   display: flex;
+  width: 100%;
 }
 
 .customizer-wrapper {
