@@ -78,7 +78,7 @@ export default {
   },
   methods: {
     makeDraggerSize: function (parentSize) {
-      return ((parentSize / 2) - (parentSize / 8))+ 'px'
+      return ((parentSize / 2) - (parentSize / 8)) + 'px'
     },
     handleMouseUp: function (direction) {
       // remove direction from parent
@@ -90,14 +90,12 @@ export default {
       this.$emit('update-active-padding-viewer-direction', direction)
       if(this.direction === 'top') {
         this.positions.clientY = event.clientY
-        // make sure that onClick viewer displays the right side straight away
-        this.$emit('update-padding-viewer-size', this.positions.movementY)
+        this.$emit('update-padding-viewer-size', this.$refs.draggableContainer.offsetTop)
         document.onmousemove = this.elementDragMovement
         document.onmouseup = this.closeDragElement
       }
       if(this.direction === 'bottom') {
         this.positions.clientY = event.clientY
-        // make sure that onClick viewer displays the right side straight away
         const position = this.$refs.draggableContainer.offsetTop + 20;
         this.$emit('update-padding-viewer-size', position - this.positions.movementY)
         document.onmousemove = this.elementDragMovement
@@ -105,14 +103,12 @@ export default {
       }
       if(this.direction === 'left') {
         this.positions.clientX = event.clientX
-        // make sure that onClick viewer displays the right side straight away
-        this.$emit('update-padding-viewer-size', this.positions.movementX)
+        this.$emit('update-padding-viewer-size', this.$refs.draggableContainer.offsetLeft)
         document.onmousemove = this.elementDragMovement
         document.onmouseup = this.closeDragElement
       }
       if(this.direction === 'right') {
         this.positions.clientX = event.clientX
-        // make sure that onClick viewer displays the right side straight away
         this.$emit('update-padding-viewer-size', this.$refs.draggableContainer.offsetLeft - this.positions.movementX)
         document.onmousemove = this.elementDragMovement
         document.onmouseup = this.closeDragElement

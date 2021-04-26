@@ -57,10 +57,10 @@ export default Vue.extend({
   },
   methods: {
     updateActivePaddingViewer: function (direction) {
-      const index = this.activePadding.direction.findIndex(v => v === direction)
-      if (index >= 0)
-        this.activePadding.direction.splice(index, 1)
-      if(index === -1) this.activePadding.direction.push(direction)
+      if(this.activePadding.direction.length > 0) {
+        this.activePadding.direction.splice(0, this.activePadding.direction.length)
+      }
+      this.activePadding.direction.push(direction)
     },
     updatePaddingViewerSize: function (size) {
       this.$set(this.activePadding, 'size', size)
