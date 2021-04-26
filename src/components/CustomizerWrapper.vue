@@ -16,6 +16,7 @@
         :parentHeight="slotHeight"
         :parentWidth="slotWidth"
         :class="{'test' : isDraggerClicked}"
+        :bidirectionnal="isBidirectionnal"
         @mousedown="handleMouseDown"
         @mouseup="handleMouseUp"
         @update-padding-viewer-size="updatePaddingViewerSize"
@@ -41,6 +42,7 @@ export default Vue.extend({
   },
   data: () => ({
     isDraggerClicked: false,
+    isBidirectionnal: false,
     directions: ['top', 'right', 'bottom', 'left'],
     activePadding: {
       direction: [],
@@ -50,17 +52,27 @@ export default Vue.extend({
     slotWidth: 0,
   }),
   mounted() {
+    window.addEventListener('keydown', this._keyListener);
     this.$nextTick(() => {
       this.slotHeight = this.$refs.draggableContainer.clientHeight;
       this.slotWidth = this.$refs.draggableContainer.clientWidth;
     })
   },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this._keyListener);
+  },
   methods: {
+    _keyListener(e) {
+      if (e.key === "Shift") {  //filter down to Ctrl+S (as an example)
+        e.preventDefault(); //prevent the default action (save page in this case)
+        this.isBidirectionnal = true
+      }
+    },
     updateActivePaddingViewer: function (direction) {
       if(this.activePadding.direction.length > 0) {
         this.activePadding.direction.splice(0, this.activePadding.direction.length)
       }
-      this.activePadding.direction.push(direction)
+      this.activePadding.direction = [...this.activePadding.direction, ...direction]
     },
     updatePaddingViewerSize: function (size) {
       this.$set(this.activePadding, 'size', size)
