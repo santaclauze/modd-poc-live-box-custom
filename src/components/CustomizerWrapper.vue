@@ -5,7 +5,7 @@
         v-for="direction in directions"
         :direction="direction"
         :key="'viewer-'+ direction"
-        :activePaddingSizeViewer="activePaddingSizeViewer"
+        :activePadding="activePadding"
         :parentHeight="slotHeight"
         :parentWidth="slotWidth"
     />
@@ -42,7 +42,7 @@ export default Vue.extend({
   data: () => ({
     isDraggerClicked: false,
     directions: ['top', 'right', 'bottom', 'left'],
-    activePaddingSizeViewer: {
+    activePadding: {
       direction: [],
       size: '',
     },
@@ -57,13 +57,13 @@ export default Vue.extend({
   },
   methods: {
     updateActivePaddingViewer: function (direction) {
-      const index = this.activePaddingSizeViewer.direction.findIndex(v => v === direction)
+      const index = this.activePadding.direction.findIndex(v => v === direction)
       if (index >= 0)
-        this.activePaddingSizeViewer.direction.splice(index, 1)
-      if(index === -1) this.activePaddingSizeViewer.direction.push(direction)
+        this.activePadding.direction.splice(index, 1)
+      if(index === -1) this.activePadding.direction.push(direction)
     },
     updatePaddingViewerSize: function (size) {
-      this.$set(this.activePaddingSizeViewer, 'size', size)
+      this.$set(this.activePadding, 'size', size)
     },
     handleMouseDown: function () {
       this.set(this.isDraggerClicked = true);
@@ -74,12 +74,11 @@ export default Vue.extend({
   },
   computed: {
     styles() {
-      console.log(this.activePaddingSizeViewer)
       const styles = {
-        paddingTop: this.activePaddingSizeViewer.direction.includes('top') && this.activePaddingSizeViewer.size + 'px',
-        paddingBottom: this.activePaddingSizeViewer.direction.includes('bottom') && (this.slotHeight - this.activePaddingSizeViewer.size) + 'px',
-        paddingRight: this.activePaddingSizeViewer.direction.includes('right') && (this.slotWidth -this.activePaddingSizeViewer.size) + 'px',
-        paddingLeft: this.activePaddingSizeViewer.direction.includes('left') && this.activePaddingSizeViewer.size + 'px',
+        paddingTop: this.activePadding.direction.includes('top') && this.activePadding.size - 10 + 'px',
+        paddingBottom: this.activePadding.direction.includes('bottom') && (this.slotHeight - this.activePadding.size - 20) + 'px',
+        paddingRight: this.activePadding.direction.includes('right') && (this.slotWidth - this.activePadding.size - 20) + 'px',
+        paddingLeft: this.activePadding.direction.includes('left') && this.activePadding.size - 10 + 'px',
       }
       return styles;
     }
