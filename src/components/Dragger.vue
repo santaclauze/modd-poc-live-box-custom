@@ -130,7 +130,7 @@ export default {
         this.$refs.draggableContainer.style.top = styleTop + 'px'
         this.$emit('update-padding-viewer-size', styleTop)
         if(this.$refs.draggableContainer.offsetTop - this.positions.movementY < maxPosition.bottom) {
-          this.$refs.draggableContainer.style.top = '0px'
+          this.$refs.draggableContainer.style.top = maxPosition.bottom + 'px'
         }
       }
       if(this.direction === 'bottom') {

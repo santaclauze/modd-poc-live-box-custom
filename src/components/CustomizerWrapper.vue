@@ -1,5 +1,5 @@
 <template>
-  <div class="customizer-wrapper" ref="draggableContainer">
+  <div class="customizer-wrapper" ref="draggableContainer" @click="removePaddingViewers">
     <div class="slot-wrapper" :style="[styles]"><DivToBeTested /></div>
     <PaddingSizeViewer
         v-for="direction in directions"
@@ -66,10 +66,13 @@ export default Vue.extend({
       this.$set(this.activePadding, 'size', size)
     },
     handleMouseDown: function () {
-      this.set(this.isDraggerClicked = true);
+      this.$set(this.isDraggerClicked = true);
     },
     handleMouseUp() {
-      this.set(this.isDraggerClicked = false);
+      this.$set(this.isDraggerClicked = false);
+    },
+    removePaddingViewers() {
+      this.$set(this.activePadding.direction = [])
     }
   },
   computed: {
