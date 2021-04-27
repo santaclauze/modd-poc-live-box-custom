@@ -5,9 +5,9 @@
         v-for="direction in directions"
         :direction="direction"
         :key="'viewer-'+ direction"
-        :activePadding="activePadding"
         :parentHeight="slotHeight"
         :parentWidth="slotWidth"
+        :active="active"
     />
     <Dragger
         v-for="direction in directions"
@@ -44,38 +44,52 @@ export default Vue.extend({
     isDraggerClicked: false,
     isBidirectionnal: false,
     directions: ['top', 'right', 'bottom', 'left'],
-    activePadding: {
+    active: {
       direction: [],
-      size: '',
+      padding: {
+        top: 0,
+        right: 0,
+        bottom: 0,
+        left: 0,
+      },
     },
     slotHeight: 0,
     slotWidth: 0,
   }),
   mounted() {
-    window.addEventListener('keydown', this._keyListener);
+    window.addEventListener('keydown', this._keyDownListener);
+    window.addEventListener("keyup", this._keyUpListener);
     this.$nextTick(() => {
       this.slotHeight = this.$refs.draggableContainer.clientHeight;
       this.slotWidth = this.$refs.draggableContainer.clientWidth;
     })
   },
   beforeDestroy() {
-    window.removeEventListener('keydown', this._keyListener);
+    window.removeEventListener('keydown', this._keyDownListener);
+    window.removeEventListener('keyup', this._keyUpListener);
   },
   methods: {
-    _keyListener(e) {
+    _keyDownListener(e) {
       if (e.key === "Shift") {  //filter down to Ctrl+S (as an example)
         e.preventDefault(); //prevent the default action (save page in this case)
         this.isBidirectionnal = true
       }
     },
-    updateActivePaddingViewer: function (direction) {
-      if(this.activePadding.direction.length > 0) {
-        this.activePadding.direction.splice(0, this.activePadding.direction.length)
+    _keyUpListener(e) {
+      if (e.key === "Shift") {  //filter down to Ctrl+S (as an example)
+        e.preventDefault(); //prevent the default action (save page in this case)
+        this.isBidirectionnal = false
       }
-      this.activePadding.direction = [...this.activePadding.direction, ...direction]
     },
-    updatePaddingViewerSize: function (size) {
-      this.$set(this.activePadding, 'size', size)
+    updateActivePaddingViewer: function (direction) {
+      if(this.active.direction.length > 0) {
+        this.active.direction.splice(0, this.active.direction.length)
+      }
+      this.active.direction =  [...this.active.direction, ...direction]
+      setTimeout(function () { this.active.direction.splice(0, this.active.direction.length) }.bind(this), 1000)
+    },
+    updatePaddingViewerSize: function (direction, size) {
+      this.$set(this.active.padding, direction, size)
     },
     handleMouseDown: function () {
       this.set(this.isDraggerClicked = true);
@@ -87,10 +101,10 @@ export default Vue.extend({
   computed: {
     styles() {
       const styles = {
-        paddingTop: this.activePadding.direction.includes('top') && this.activePadding.size - 10 + 'px',
-        paddingBottom: this.activePadding.direction.includes('bottom') && (this.slotHeight - this.activePadding.size - 20) + 'px',
-        paddingRight: this.activePadding.direction.includes('right') && (this.slotWidth - this.activePadding.size - 20) + 'px',
-        paddingLeft: this.activePadding.direction.includes('left') && this.activePadding.size - 10 + 'px',
+        paddingTop: this.active.padding.top - 10 + 'px',
+        paddingBottom: this.slotHeight - this.active.padding.bottom - 20 + 'px',
+        paddingRight: this.slotWidth - this.active.padding.right - 20 + 'px',
+        paddingLeft: this.active.padding.left - 10 + 'px',
       }
       return styles;
     }
@@ -109,7 +123,7 @@ export default Vue.extend({
   display: flex;
   height: 500px;
   width: 600px;
-  border: 1px solid grey;
+  outline: 1px solid grey;
 }
 
 .customizer-wrapper:hover .dragger {
@@ -120,17 +134,6 @@ export default Vue.extend({
 .customizer-wrapper:hover .dragger:hover {
   cursor: grab;
   background: deepskyblue;
-}
-
-.mock-padding-box {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 90%;
-  border: 1px solid red;
-  background-color: lightskyblue;
-  z-index: 900;
 }
 
 

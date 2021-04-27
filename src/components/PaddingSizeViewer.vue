@@ -1,6 +1,7 @@
 <template>
   <div
       class="padding-size-viewer"
+      v-if="active.direction.includes(direction)"
       :class="[direction + '-padding-size-viewer']"
       :style="[styles]"
   />
@@ -14,9 +15,14 @@ export default {
     size: String,
     parentHeight: Number,
     parentWidth: Number,
-    activePadding: {
+    active: {
       direction: [],
-      size: String,
+      padding: {
+        top: Number,
+        right: Number,
+        bottom: Number,
+        left: Number,
+      }
     }
   },
   computed: {
@@ -24,37 +30,37 @@ export default {
       const viewerStyles = {
         display: 'block'
       };
-      if (this.activePadding.direction.includes('top')) {
+      if (this.direction === 'top' && this.active.padding.top !== 0) {
         return {
           ...viewerStyles,
           top: 0,
-          right: '1px',
-          left: '1px',
-          height: (this.activePadding.size - 10) + 'px'}
+          right: 0,
+          left: 0,
+          height: (this.active.padding.top - 10) + 'px'}
       }
-      if (this.activePadding.direction.includes('bottom')) {
+      if (this.direction === 'bottom' && this.active.padding.bottom !== 0) {
         return {
           ...viewerStyles,
           bottom: 0,
-          right: '1px',
-          left: '1px',
-          height: (this.parentHeight - this.activePadding.size - 20) + 'px'}
-      }
-      if (this.activePadding.direction.includes('right')) {
-        return {
-          ...viewerStyles,
-          top: '1px',
-          bottom: '1px',
           right: 0,
-          width: (this.parentWidth - this.activePadding.size - 20) + 'px'}
+          left: 0,
+          height: (this.parentHeight - this.active.padding.bottom - 20) + 'px'}
       }
-      if (this.activePadding.direction.includes('left')) {
+      if (this.direction === 'right' && this.active.padding.right !== 0) {
         return {
           ...viewerStyles,
-          top: '1px',
-          bottom: '1px',
+          top: 0,
+          bottom: 0,
+          right: 0,
+          width: (this.parentWidth - this.active.padding.right - 20) + 'px'}
+      }
+      if (this.direction === 'left' && this.active.padding.left !== 0) {
+        return {
+          ...viewerStyles,
+          top: 0,
+          bottom: 0,
           left: 0,
-          width: (this.activePadding.size - 10) + 'px'}
+          width: (this.active.padding.left - 10) + 'px'}
       }
       return viewerStyles;
     }
@@ -65,7 +71,7 @@ export default {
 <style scoped>
 .padding-size-viewer {
   background-color: lightskyblue;
-  outline: 1px dashed royalblue;
+  border: 1px dashed royalblue;
   position: absolute;
 }
 </style>
