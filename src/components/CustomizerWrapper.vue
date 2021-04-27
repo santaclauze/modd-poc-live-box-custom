@@ -8,6 +8,7 @@
         :activePadding="activePadding"
         :parentHeight="slotHeight"
         :parentWidth="slotWidth"
+        :isBidirectionnal="isBidirectionnal"
     />
     <Dragger
         v-for="direction in directions"
@@ -41,6 +42,7 @@ export default Vue.extend({
   },
   data: () => ({
     isDraggerClicked: false,
+    isBidirectionnal: false,
     directions: ['top', 'right', 'bottom', 'left'],
     activePadding: {
       direction: [],
@@ -50,17 +52,35 @@ export default Vue.extend({
     slotWidth: 0,
   }),
   mounted() {
+    window.addEventListener('keypress', this._keyDownListener);
+    window.addEventListener("keyup", this._keyUpListener);
     this.$nextTick(() => {
       this.slotHeight = this.$refs.draggableContainer.clientHeight;
       this.slotWidth = this.$refs.draggableContainer.clientWidth;
     })
   },
+  beforeDestroy() {
+    window.removeEventListener('keypress', this._keyDownListener);
+    window.removeEventListener('keyup', this._keyUpListener);
+  },
   methods: {
+    _keyDownListener(e) {
+      if (e.key === "a") {
+        e.preventDefault();
+        this.isBidirectionnal = true;
+      }
+    },
+    _keyUpListener(e) {
+      if (e.key === "a") {
+        e.preventDefault();
+        this.isBidirectionnal = false;
+      }
+    },
     updateActivePaddingViewer: function (direction) {
       if(this.activePadding.direction.length > 0) {
         this.activePadding.direction.splice(0, this.activePadding.direction.length)
       }
-      this.activePadding.direction.push(direction)
+      this.activePadding.direction = [...this.activePadding.direction, ...direction]
     },
     updatePaddingViewerSize: function (size) {
       this.$set(this.activePadding, 'size', size)
@@ -77,13 +97,20 @@ export default Vue.extend({
   },
   computed: {
     styles() {
-      const styles = {
+      const stylesUnilateral = {
         paddingTop: this.activePadding.direction.includes('top') && this.activePadding.size - 10 + 'px',
         paddingBottom: this.activePadding.direction.includes('bottom') && (this.slotHeight - this.activePadding.size - 20) + 'px',
         paddingRight: this.activePadding.direction.includes('right') && (this.slotWidth - this.activePadding.size - 20) + 'px',
         paddingLeft: this.activePadding.direction.includes('left') && this.activePadding.size - 10 + 'px',
-      }
-      return styles;
+      };
+
+      const stylesBilateral = {
+        paddingTop: this.activePadding.direction.includes('top') && this.activePadding.size - 10 + 'px',
+        paddingBottom: this.activePadding.direction.includes('bottom') && this.activePadding.size - 10 + 'px',
+        paddingRight: this.activePadding.direction.includes('right') && this.activePadding.size - 10 + 'px',
+        paddingLeft: this.activePadding.direction.includes('left') && this.activePadding.size - 10 + 'px',
+      };
+      return this.isBidirectionnal ? stylesBilateral : stylesUnilateral;
     }
   },
 })

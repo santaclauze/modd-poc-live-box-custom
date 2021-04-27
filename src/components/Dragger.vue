@@ -17,6 +17,7 @@ export default {
     direction: String,
     parentHeight: Number,
     parentWidth: Number,
+    isBidirectionnal: Boolean,
   },
   data: () => ({
     positions: {
@@ -82,12 +83,14 @@ export default {
     },
     handleMouseUp: function (direction) {
       // remove direction from parent
-      this.$emit('update-active-padding-viewer-direction', direction)
+      this.$emit('update-active-padding-viewer-direction', [direction])
     },
     dragMouseDown: function (direction, event) {
       event.preventDefault()
       // send direction to parent
-      this.$emit('update-active-padding-viewer-direction', direction)
+      this.$emit('update-active-padding-viewer-direction', [direction])
+      // this.$emit('update-active-padding-viewer-direction', ...[(direction === 'top' || direction === 'bottom') ? ['top', 'bottom'] : ['left', 'right']])
+
       if(this.direction === 'top') {
         this.positions.clientY = event.clientY
         this.$emit('update-padding-viewer-size', this.$refs.draggableContainer.offsetTop)
