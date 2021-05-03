@@ -103,15 +103,21 @@ export default Vue.extend({
         paddingRight: this.activePadding.direction.includes('right') && (this.slotWidth - this.activePadding.size - 20) + 'px',
         paddingLeft: this.activePadding.direction.includes('left') && this.activePadding.size - 10 + 'px',
       };
-
-      const stylesBilateral = {
-        paddingTop: this.activePadding.direction.includes('top') && this.activePadding.size - 10 + 'px',
-        paddingBottom: this.activePadding.direction.includes('bottom') && this.activePadding.size - 10 + 'px',
-        paddingRight: this.activePadding.direction.includes('right') && this.activePadding.size - 10 + 'px',
-        paddingLeft: this.activePadding.direction.includes('left') && this.activePadding.size - 10 + 'px',
-      };
-      return this.isBidirectionnal ? stylesBilateral : stylesUnilateral;
+      //
+      // const stylesXAxis = {
+      //   paddingRight: this.activePadding.direction.includes('right') && this.activePadding.size + 'px',
+      //   paddingLeft: this.activePadding.direction.includes('left') && this.activePadding.size - 10 + 'px',
+      // };
+      //
+      // console.log(stylesXAxis)
+      //
+      // const stylesYAxis = {
+      //   paddingBottom: this.activePadding.direction.includes('bottom') && (this.slotHeight - this.activePadding.size - 20) + 'px',
+      //   paddingTop: this.activePadding.direction.includes('top') && this.activePadding.size - 10 + 'px',
+      // };
+      return stylesUnilateral
     }
+
   },
 })
 </script>

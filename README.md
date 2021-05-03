@@ -16,9 +16,29 @@ Layers should be customizable by user. UX and intuitiveness is important!
 6. Global 4px snap to grid, prevent snap to grid while holding alt key (does this mean drag and drop?)
 
 
+## questions
+
+### TODO:
+
+1. 
+padding bottom should be pushign bottom.
+height and width should fit content.
+dropshadow
+
+2.
+px to percent
+
+3.
+x/yaxis 
+
+4.
+ui/ux -> refining
 
 
-## Aggregating layers
+dropshadow
 
 
-## Grid Layout
+
+
+idea on UI?
+how do you want to connect it to api? (how do you translatio
