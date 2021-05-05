@@ -1,52 +1,77 @@
 <template>
   <div class="customizer-wrapper" ref="draggableContainer" @click="removePaddingViewers">
-    <div class="slot-wrapper" :style="[styles]"><DivToBeTested /></div>
-    <PaddingSizeViewer
-        v-for="direction in directions"
-        :direction="direction"
-        :key="'viewer-'+ direction"
-        :activePadding="activePadding"
+    <div class="slot-wrapper" :style="styles"><slot></slot></div>
+    <ContainerCustomizer
+        direction="bottom"
         :parentHeight="slotHeight"
         :parentWidth="slotWidth"
-        :isBidirectionnal="isBidirectionnal"
+        @update-padding="updatePadding"
     />
-    <Dragger
-        v-for="direction in directions"
-        :direction="direction"
-        :key="'dragger-'+ direction"
-        :parentHeight="slotHeight"
-        :parentWidth="slotWidth"
-        :class="{'test' : isDraggerClicked}"
-        @mousedown="handleMouseDown"
-        @mouseup="handleMouseUp"
-        @update-padding-viewer-size="updatePaddingViewerSize"
-        @update-active-padding-viewer-direction="updateActivePaddingViewer"
-    />
+<!--        <Dragger-->
+<!--            v-for="direction in directions"-->
+<!--            :direction="direction"-->
+<!--            :key="'dragger-'+ direction"-->
+<!--            :parentHeight="slotHeight"-->
+<!--            :parentWidth="slotWidth"-->
+<!--            :class="{'test' : isDraggerClicked}"-->
+<!--            @mousedown="handleMouseDown"-->
+<!--            @mouseup="handleMouseUp"-->
+<!--            @update-padding-viewer-size="updatePaddingViewerSize"-->
+<!--            @update-active-padding-viewer-direction="updateActivePaddingViewer"-->
+<!--        />-->
+<!--    <ItemCustomizer-->
+<!--        v-for="direction in directions"-->
+<!--        :direction="direction"-->
+<!--        :key="'item-customizer-'+ direction"-->
+<!--        :activePadding="activePadding"-->
+<!--        :parentHeight="slotHeight"-->
+<!--        :parentWidth="slotWidth"-->
+<!--        :isBidirectionnal="isBidirectionnal"-->
+<!--        :class="{'test' : isDraggerClicked}"-->
+<!--        @mousedown="handleMouseDown"-->
+<!--        @mouseup="handleMouseUp"-->
+<!--        @update-padding-viewer-size="updatePaddingViewerSize"-->
+<!--        @update-active-padding-viewer-direction="updateActivePaddingViewer"-->
+<!--    />-->
+<!--    <PaddingSizeViewer-->
+<!--        v-for="direction in directions"-->
+<!--        :direction="direction"-->
+<!--        :key="'viewer-'+ direction"-->
+<!--        :activePadding="activePadding"-->
+<!--        :parentHeight="slotHeight"-->
+<!--        :parentWidth="slotWidth"-->
+<!--        :isBidirectionnal="isBidirectionnal"-->
+<!--    />-->
   </div>
 </template>
 
 <script>
 import Vue from "vue";
-import Dragger from './Dragger';
-import DivToBeTested from './DivToBeTested';
 // import TextToBeTested from './TextToBeTested';
-import PaddingSizeViewer from './PaddingSizeViewer';
+// import PaddingSizeViewer from './PaddingSizeViewer';
+// import ItemCustomizer from "./ItemCustomizer";
+// import Dragger from "./Dragger";
+import ContainerCustomizer from "./customizer/ContainerCustomizer";
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
   components: {
-    DivToBeTested,
+    // ItemCustomizer,
     // TextToBeTested,
-    Dragger,
-    PaddingSizeViewer,
+    // PaddingSizeViewer,
+    // Dragger,
+    ContainerCustomizer,
   },
   data: () => ({
     isDraggerClicked: false,
-    isBidirectionnal: false,
-    directions: ['top', 'right', 'bottom', 'left'],
     activePadding: {
       direction: [],
       size: '',
+    },
+    customPad: {
+      s: [0, 15, 0, 15],
+      m: [0, 15, 0, 15],
+      l: [0, 15, 0, 15]
     },
     slotHeight: 0,
     slotWidth: 0,
@@ -83,7 +108,7 @@ export default Vue.extend({
       this.activePadding.direction = [...this.activePadding.direction, ...direction]
     },
     updatePaddingViewerSize: function (size) {
-      this.$set(this.activePadding, 'size', size)
+      this.$set(this.customPad, 'l[3]', size[0])
     },
     handleMouseDown: function () {
       this.$set(this.isDraggerClicked = true);
@@ -93,16 +118,25 @@ export default Vue.extend({
     },
     removePaddingViewers() {
       this.$set(this.activePadding.direction = [])
+    },
+    updatePadding(size) {
+
+      this.customPad = Object.assign({}, this.customPad, { l: [0, 15, size[0], 15] })
+
     }
   },
   computed: {
     styles() {
-      const stylesUnilateral = {
-        paddingTop: this.activePadding.direction.includes('top') && this.activePadding.size - 10 + 'px',
-        paddingBottom: this.activePadding.direction.includes('bottom') && (this.slotHeight - this.activePadding.size - 20) + 'px',
-        paddingRight: this.activePadding.direction.includes('right') && (this.slotWidth - this.activePadding.size - 20) + 'px',
-        paddingLeft: this.activePadding.direction.includes('left') && this.activePadding.size - 10 + 'px',
+      console.log(this.customPad.l[2] + 'px')
+      return {
+        paddingBottom: this.customPad.l[2] + 'px',
       };
+      // const stylesUnilateral = {
+      //   paddingTop: this.activePadding.direction.includes('top') && this.activePadding.size - 10 + 'px',
+      //   paddingBottom: this.activePadding.direction.includes('bottom') && (this.slotHeight - this.activePadding.size - 20) + 'px',
+      //   paddingRight: this.activePadding.direction.includes('right') && (this.slotWidth - this.activePadding.size - 20) + 'px',
+      //   paddingLeft: this.activePadding.direction.includes('left') && this.activePadding.size - 10 + 'px',
+      // };
       //
       // const stylesXAxis = {
       //   paddingRight: this.activePadding.direction.includes('right') && this.activePadding.size + 'px',
@@ -115,14 +149,12 @@ export default Vue.extend({
       //   paddingBottom: this.activePadding.direction.includes('bottom') && (this.slotHeight - this.activePadding.size - 20) + 'px',
       //   paddingTop: this.activePadding.direction.includes('top') && this.activePadding.size - 10 + 'px',
       // };
-      return stylesUnilateral
     }
-
   },
 })
 </script>
 
-<style scoped>
+<style>
 .slot-wrapper {
   display: flex;
   width: 100%;
@@ -131,8 +163,6 @@ export default Vue.extend({
 .customizer-wrapper {
   position: relative;
   display: flex;
-  height: 500px;
-  width: 600px;
   border: 1px solid grey;
 }
 
@@ -146,16 +176,6 @@ export default Vue.extend({
   background: deepskyblue;
 }
 
-.mock-padding-box {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 90%;
-  border: 1px solid red;
-  background-color: lightskyblue;
-  z-index: 900;
-}
 
 
 </style>
