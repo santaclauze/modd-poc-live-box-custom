@@ -6,6 +6,8 @@
   />
 </template>
 
+// DEPRECATED
+
 <script>
 export default {
   name: "PaddingSizeViewer",

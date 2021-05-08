@@ -10,6 +10,8 @@
   />
 </template>
 
+
+// DEPRECATED
 <script>
 export default {
   name: "Dragger",
