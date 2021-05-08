@@ -8,23 +8,30 @@
   >
     <div :style="styles"><slot></slot></div>
     <ContainerCustomizer
-      direction="bottom"
       :parentHeight="slotHeight"
       :parentWidth="slotWidth"
       :hasSnapToGrid="hasSnapToGrid"
       @update-padding="updatePadding"
     />
+<!--    <ImageCustomizer-->
+<!--        :parentHeight="slotHeight"-->
+<!--        :parentWidth="slotWidth"-->
+<!--        :hasSnapToGrid="hasSnapToGrid"-->
+<!--        @update-padding="updatePadding"-->
+<!--    />-->
   </div>
 </template>
 
 <script>
 import Vue from "vue";
 import ContainerCustomizer from "./customizer/ContainerCustomizer";
+// import ImageCustomizer from "./customizer/ImageCustomizer";
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
   components: {
     ContainerCustomizer,
+    // ImageCustomizer,
   },
   data: () => ({
     customPad: {
@@ -43,9 +50,6 @@ export default Vue.extend({
     })
   },
   methods: {
-    updatePaddingViewerSize: function (size) {
-      this.$set(this.customPad, 'l[3]', size[0])
-    },
     removePaddingViewers() {
     },
     toggleSnapToGrid(e) {
@@ -61,14 +65,17 @@ export default Vue.extend({
       document.removeEventListener('keydown', this.toggleSnapToGrid);
       document.removeEventListener('keyup', this.toggleSnapToGrid);
     },
-    updatePadding(size) {
-      this.customPad = Object.assign({}, this.customPad, { l: [0, 15, size[0], 15] })
+    updatePadding(args) {
+      this.customPad = Object.assign({}, this.customPad, { [args.breakpoint]: args.padding })
     }
   },
   computed: {
     styles() {
       return {
+        paddingTop: this.customPad.l[0] + 'px',
+        paddingRight: this.customPad.l[1] + 'px',
         paddingBottom: this.customPad.l[2] + 'px',
+        paddingLeft: this.customPad.l[3] + 'px',
       };
     }
   },

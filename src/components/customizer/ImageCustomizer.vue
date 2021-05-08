@@ -58,17 +58,17 @@ export default {
   computed: {
     draggerStyles() {
       return {
-        height: '7px',
+        height: '5px',
         width: this.parentWidth / 4 + 'px',
         left: this.makeDraggerSize(this.parentWidth),
-        bottom: '10px',
+        top: '10px',
       };
     },
     viewerStyles() {
       return {
         position: 'absolute',
         display: 'block',
-        bottom: 0,
+        top: 0,
         right: '1px',
         left: '1px',
       }

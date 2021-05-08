@@ -43,7 +43,6 @@ function trackMouseDrag(
 export default {
   name: "ContainerCustomizer",
   props: {
-    direction: String,
     parentHeight: Number,
     parentWidth: Number,
     hasSnapToGrid: Boolean,
@@ -100,7 +99,8 @@ export default {
               this.$refs.draggableContainer.style.top = this.originalDraggerPosition + 'px';
               return;
             }
-            this.$emit('update-padding', [this.viewerHeight])
+            console.log('?')
+            this.$emit('update-padding', { breakpoint: 'l', padding: [0, 15, this.viewerHeight, 15] })
           },
           () => {
             // we do not want to save a negative height value. Set it to 0 if it is negative.
