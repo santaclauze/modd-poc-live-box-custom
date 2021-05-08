@@ -77,21 +77,21 @@ export default {
     makeDraggerSize: function (parentSize) {
       return ((parentSize / 2) - (parentSize / 8)) + 'px'
     },
-    makeActiveDraggerStyles: function() {
-
-    },
     moveSize: function (initialEvent) {
       const position = this.$refs.draggableContainer.offsetTop;
       const initialHeight = this.viewerHeight;
       trackMouseDrag(
           initialEvent,
           (dx, dy) => {
-
             const newDraggerTopPosition = position + dy;
             this.$refs.draggableContainer.style.top = newDraggerTopPosition + 'px';
-            console.log(initialHeight, dy)
+            // SNAP TO GRID
+            // if(dy%8 === 0 ) {
+            //   console.log(dy%4, dy)
+            //   this.viewerHeight = initialHeight + dy;
+            // }
             this.viewerHeight = initialHeight + dy;
-            console.log(newDraggerTopPosition, position, this.originalDraggerPosition, this.viewerHeight)
+
             if(newDraggerTopPosition < this.originalDraggerPosition) {
               this.$refs.draggableContainer.style.top = this.originalDraggerPosition + 'px';
               return;
@@ -99,6 +99,8 @@ export default {
             this.$emit('update-padding', [this.viewerHeight])
           },
           () => {
+            // we do not want to save a negative height value. Set it to 0 if it is negative.
+            if(this.viewerHeight < 0) { return this.viewerHeight = 0 }
           },
       )
     },
