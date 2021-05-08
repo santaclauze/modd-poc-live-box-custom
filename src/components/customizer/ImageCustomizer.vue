@@ -8,9 +8,9 @@
         class="dragger"
     />
     <div
-      class="container-padding-viewer"
-      :style="[viewerStyles, { height: viewerHeight + 'px'}]"
-      @mousedown.prevent.stop="moveSize"
+        class="container-padding-viewer"
+        :style="[viewerStyles, { height: viewerHeight + 'px'}]"
+        @mousedown.prevent.stop="moveSize"
     >
       <div v-if="this.viewerHeight > 0" class="height-displayer">{{this.viewerHeight}}px</div>
     </div>

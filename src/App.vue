@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <h1>item</h1>
-    <CustomizerWrapper><DivToBeTested /></CustomizerWrapper>
+    <h1>Container example</h1>
+    <CustomizerWrapper><ContainerExample /></CustomizerWrapper>
     <hr />
-    <h1>container</h1>
+    <h1>Image example</h1>
 
-    <CustomizerWrapper><ContainerTest /></CustomizerWrapper>
+    <CustomizerWrapper><ImageExample /></CustomizerWrapper>
 
   </div>
 </template>
@@ -14,15 +14,15 @@
 
 
 import CustomizerWrapper from "@/components/CustomizerWrapper";
-import DivToBeTested from "@/components/test/DivToBeTested";
-import ContainerTest from "@/components/test/ContainerTest";
+import ContainerExample from "@/components/test/ContainerExample";
+import ImageExample from "@/components/test/ImageExample";
 
 export default {
   name: 'App',
   components: {
     CustomizerWrapper,
-    DivToBeTested,
-    ContainerTest,
+    ContainerExample,
+    ImageExample,
   }
 }
 </script>

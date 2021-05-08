@@ -1,11 +1,18 @@
 <template>
-  <div class="customizer-wrapper" ref="draggableContainer" @click="removePaddingViewers">
+  <div
+    class="customizer-wrapper"
+    ref="draggableContainer"
+    @click="removePaddingViewers"
+    @mouseleave="handleMouseLeave"
+    @mouseenter="handleMouseEnter"
+  >
     <div :style="styles"><slot></slot></div>
     <ContainerCustomizer
-        direction="bottom"
-        :parentHeight="slotHeight"
-        :parentWidth="slotWidth"
-        @update-padding="updatePadding"
+      direction="bottom"
+      :parentHeight="slotHeight"
+      :parentWidth="slotWidth"
+      :hasSnapToGrid="hasSnapToGrid"
+      @update-padding="updatePadding"
     />
   </div>
 </template>
@@ -27,6 +34,7 @@ export default Vue.extend({
     },
     slotHeight: 0,
     slotWidth: 0,
+    hasSnapToGrid: true,
   }),
   mounted() {
     this.$nextTick(() => {
@@ -39,6 +47,19 @@ export default Vue.extend({
       this.$set(this.customPad, 'l[3]', size[0])
     },
     removePaddingViewers() {
+    },
+    toggleSnapToGrid(e) {
+      if(e.key === 'Shift') {
+        this.hasSnapToGrid = !this.hasSnapToGrid
+      }
+    },
+    handleMouseEnter() {
+      document.addEventListener('keydown', this.toggleSnapToGrid);
+      document.addEventListener('keyup', this.toggleSnapToGrid);
+    },
+    handleMouseLeave() {
+      document.removeEventListener('keydown', this.toggleSnapToGrid);
+      document.removeEventListener('keyup', this.toggleSnapToGrid);
     },
     updatePadding(size) {
       this.customPad = Object.assign({}, this.customPad, { l: [0, 15, size[0], 15] })
