@@ -2,7 +2,6 @@
   <div>
     <div
         ref="draggableContainer"
-        id="draggable-container"
         @mousedown.prevent.stop="moveSize"
         :style="draggerStyles"
         class="dragger"

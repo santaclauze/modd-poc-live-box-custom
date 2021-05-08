@@ -5,33 +5,36 @@
     @click="removePaddingViewers"
     @mouseleave="handleMouseLeave"
     @mouseenter="handleMouseEnter"
+    :style="customizerStyles"
   >
     <div :style="styles"><slot></slot></div>
-    <ContainerCustomizer
-      :parentHeight="slotHeight"
-      :parentWidth="slotWidth"
-      :hasSnapToGrid="hasSnapToGrid"
-      @update-padding="updatePadding"
-    />
-<!--    <ImageCustomizer-->
-<!--        :parentHeight="slotHeight"-->
-<!--        :parentWidth="slotWidth"-->
-<!--        :hasSnapToGrid="hasSnapToGrid"-->
-<!--        @update-padding="updatePadding"-->
+<!--    <ContainerCustomizer-->
+<!--      :parentHeight="height"-->
+<!--      :parentWidth="width"-->
+<!--      :hasSnapToGrid="hasSnapToGrid"-->
+<!--      @update-padding="updatePadding"-->
 <!--    />-->
+    <ImageCustomizer
+        :parentHeight="height"
+        :parentWidth="width"
+        :hasSnapToGrid="hasSnapToGrid"
+        @update-padding="updatePadding"
+        @update-height="updateHeight"
+        @update-width="updateWidth"
+    />
   </div>
 </template>
 
 <script>
 import Vue from "vue";
-import ContainerCustomizer from "./customizer/ContainerCustomizer";
-// import ImageCustomizer from "./customizer/ImageCustomizer";
+// import ContainerCustomizer from "./customizer/ContainerCustomizer";
+import ImageCustomizer from "./customizer/ImageCustomizer";
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
   components: {
-    ContainerCustomizer,
-    // ImageCustomizer,
+    // ContainerCustomizer,
+    ImageCustomizer,
   },
   data: () => ({
     customPad: {
@@ -39,14 +42,14 @@ export default Vue.extend({
       m: [0, 15, 0, 15],
       l: [0, 15, 0, 15]
     },
-    slotHeight: 0,
-    slotWidth: 0,
+    width: 0,
+    height: 0,
     hasSnapToGrid: true,
   }),
   mounted() {
     this.$nextTick(() => {
-      this.slotHeight = this.$refs.draggableContainer.clientHeight;
-      this.slotWidth = this.$refs.draggableContainer.clientWidth;
+      this.height = this.$refs.draggableContainer.clientHeight;
+      this.width = this.$refs.draggableContainer.clientWidth;
     })
   },
   methods: {
@@ -65,11 +68,23 @@ export default Vue.extend({
       document.removeEventListener('keydown', this.toggleSnapToGrid);
       document.removeEventListener('keyup', this.toggleSnapToGrid);
     },
+    updateHeight(height) {
+      this.height = height;
+    },
+    updateWidth(width) {
+      this.width = width;
+    },
     updatePadding(args) {
       this.customPad = Object.assign({}, this.customPad, { [args.breakpoint]: args.padding })
     }
   },
   computed: {
+    customizerStyles() {
+      return {
+        height: this.height ? this.height + 'px' : 'fit-content',
+        width: this.width ? this.width + 'px' : 'fit-content'
+      }
+    },
     styles() {
       return {
         paddingTop: this.customPad.l[0] + 'px',
