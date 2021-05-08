@@ -127,7 +127,6 @@ export default Vue.extend({
   },
   computed: {
     styles() {
-      console.log(this.customPad.l[2] + 'px')
       return {
         paddingBottom: this.customPad.l[2] + 'px',
       };
@@ -169,6 +168,14 @@ export default Vue.extend({
 .customizer-wrapper:hover .dragger {
   visibility: visible;
   background: blue;
+}
+
+.customizer-wrapper:hover .container-padding-viewer {
+  background-color: rgba(215,235,247,0.6);
+}
+
+.customizer-wrapper:hover .height-displayer {
+  display: block;
 }
 
 .customizer-wrapper:hover .dragger:hover {

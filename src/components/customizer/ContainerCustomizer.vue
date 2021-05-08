@@ -3,15 +3,17 @@
     <div
         ref="draggableContainer"
         id="draggable-container"
-        class="dragger"
         @mousedown.prevent.stop="moveSize($event)"
         :style="draggerStyles"
+        class="dragger"
     />
     <div
       class="container-padding-viewer"
-      ref="viewerContainer"
-      :style="[viewerStyles]"
-    />
+      :style="[viewerStyles, { height: viewerHeight + 'px'}]"
+      @mousedown.prevent.stop="moveSize($event)"
+    >
+      <div v-if="this.viewerHeight > 0" class="height-displayer">{{this.viewerHeight}}px</div>
+    </div>
   </div>
 </template>
 
@@ -26,11 +28,11 @@ function trackMouseDrag(
     onMove(e.pageX - initEvent.pageX, e.pageY - initEvent.pageY);
   }
   function mouseUp(e) {
+    e.preventDefault();
+    e.stopPropagation();
     document.removeEventListener('mouseup', mouseUp);
     document.removeEventListener('mousemove', mouseMove);
     onDone(e.pageX - initEvent.pageX, e.pageY - initEvent.pageY);
-    e.preventDefault();
-    e.stopPropagation();
     return false;
   }
   document.addEventListener('mousemove', mouseMove);
@@ -44,6 +46,13 @@ export default {
     direction: String,
     parentHeight: Number,
     parentWidth: Number,
+  },
+  data: () => ({
+    viewerHeight: 0,
+    originalDraggerPosition: 0,
+  }),
+  mounted() {
+    this.originalDraggerPosition = this.$refs.draggableContainer.offsetTop;
   },
   computed: {
     draggerStyles() {
@@ -68,29 +77,28 @@ export default {
     makeDraggerSize: function (parentSize) {
       return ((parentSize / 2) - (parentSize / 8)) + 'px'
     },
+    makeActiveDraggerStyles: function() {
+
+    },
     moveSize: function (initialEvent) {
       const position = this.$refs.draggableContainer.offsetTop;
+      const initialHeight = this.viewerHeight;
       trackMouseDrag(
           initialEvent,
           (dx, dy) => {
-            const height = position + dy;
-            this.$refs.draggableContainer.style.top = height + 'px';
-            this.$refs.viewerContainer.style.height = dy + 'px';
 
-            if(0 > dy) {
-              this.$refs.draggableContainer.style.top = position + 'px'
+            const newDraggerTopPosition = position + dy;
+            this.$refs.draggableContainer.style.top = newDraggerTopPosition + 'px';
+            console.log(initialHeight, dy)
+            this.viewerHeight = initialHeight + dy;
+            console.log(newDraggerTopPosition, position, this.originalDraggerPosition, this.viewerHeight)
+            if(newDraggerTopPosition < this.originalDraggerPosition) {
+              this.$refs.draggableContainer.style.top = this.originalDraggerPosition + 'px';
+              return;
             }
-            this.$emit('update-padding', [dy])
+            this.$emit('update-padding', [this.viewerHeight])
           },
-          (dx, dy) => {
-            const height = position + dy;
-            this.$refs.draggableContainer.style.top = height + 'px';
-            this.$refs.viewerContainer.style.height = dy + 'px';
-
-            if(0 > dy) {
-              this.$refs.draggableContainer.style.top = position + 'px'
-            }
-            this.$emit('update-padding', [dy])
+          () => {
           },
       )
     },
@@ -99,14 +107,23 @@ export default {
 </script>
 
 <style scoped>
-div:hover > .container-padding-viewer {
-  background-color: lightskyblue;
-  outline: 1px dashed royalblue;
-}
 
 .dragger {
   border-radius: 50px;
   position: absolute;
   z-index: 1000;
+}
+
+.height-displayer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 13px;
+  background-color: #438ce6;
+  padding: 9px 14px;
+  border-radius: 30px;
+  color: white;
+  z-index: 1001;
+  display: none;
 }
 </style>

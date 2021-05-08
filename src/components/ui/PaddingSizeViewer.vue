@@ -64,8 +64,7 @@ export default {
 
 <style scoped>
 .padding-size-viewer {
-  background-color: lightskyblue;
-  outline: 1px dashed royalblue;
+  background-color: rgba(215,235,247,0.6);
   position: absolute;
 }
 </style>
