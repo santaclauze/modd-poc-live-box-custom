@@ -4,9 +4,21 @@
     <ContainerCustomizerWrapper><ContainerExample /></ContainerCustomizerWrapper>
     <hr />
     <h1>Image example</h1>
-
     <ImageCustomizerWrapper><ImageExample /></ImageCustomizerWrapper>
-
+    <hr />
+    <h1>Grid/Column example</h1>
+    <GridContent>
+      <ColumnCustomizerWrapper>
+        <GridColumn>
+          <h1>Testing Column</h1>
+        </GridColumn>
+      </ColumnCustomizerWrapper>
+      <ColumnCustomizerWrapper>
+        <GridColumn>
+          <h1>Testing Column</h1>
+        </GridColumn>
+      </ColumnCustomizerWrapper>
+    </GridContent>
   </div>
 </template>
 
@@ -15,14 +27,20 @@
 
 import ContainerCustomizerWrapper from "./components/customizer/container/ContainerCustomizerWrapper";
 import ImageCustomizerWrapper from "./components/customizer/image/ImageCustomizerWrapper";
+import ColumnCustomizerWrapper from "./components/customizer/column/ColumnCustomizerWrapper";
 import ContainerExample from "@/components/test/ContainerExample";
 import ImageExample from "@/components/test/ImageExample";
+import GridContent from "./components/test/Grid/GridContent";
+import GridColumn from "./components/test/Grid/GridColumn";
 
 export default {
   name: 'App',
   components: {
+    GridColumn,
+    GridContent,
     ContainerCustomizerWrapper,
     ImageCustomizerWrapper,
+    ColumnCustomizerWrapper,
     ContainerExample,
     ImageExample,
   }
@@ -39,8 +57,7 @@ export default {
   margin-top: 60px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  height: 2000px;
 }
 
 hr {
