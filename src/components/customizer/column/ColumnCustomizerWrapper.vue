@@ -66,6 +66,7 @@ export default Vue.extend({
       this.width = width;
     },
     updatePadding(args) {
+      console.log({ [args.breakpoint]: args.padding })
       this.customPad = Object.assign({}, this.customPad, { [args.breakpoint]: args.padding })
     }
   },

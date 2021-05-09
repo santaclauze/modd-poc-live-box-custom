@@ -98,7 +98,6 @@ export default {
               this.$refs.draggableContainer.style.top = this.originalDraggerPosition + 'px';
               return;
             }
-            console.log('?')
             this.$emit('update-padding', { breakpoint: 'l', padding: [0, 15, this.viewerHeight, 15] })
           },
           () => {
