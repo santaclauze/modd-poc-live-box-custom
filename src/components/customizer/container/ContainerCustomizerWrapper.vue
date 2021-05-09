@@ -5,36 +5,25 @@
     @click="removePaddingViewers"
     @mouseleave="handleMouseLeave"
     @mouseenter="handleMouseEnter"
-    :style="customizerStyles"
   >
     <div :style="styles"><slot></slot></div>
-<!--    <ContainerCustomizer-->
-<!--      :parentHeight="height"-->
-<!--      :parentWidth="width"-->
-<!--      :hasSnapToGrid="hasSnapToGrid"-->
-<!--      @update-padding="updatePadding"-->
-<!--    />-->
-    <ImageCustomizer
-        :parentHeight="height"
-        :parentWidth="width"
-        :hasSnapToGrid="hasSnapToGrid"
-        @update-padding="updatePadding"
-        @update-height="updateHeight"
-        @update-width="updateWidth"
+    <ContainerCustomizer
+      :parentHeight="height"
+      :parentWidth="width"
+      :hasSnapToGrid="hasSnapToGrid"
+      @update-padding="updatePadding"
     />
   </div>
 </template>
 
 <script>
 import Vue from "vue";
-// import ContainerCustomizer from "./customizer/ContainerCustomizer";
-import ImageCustomizer from "./customizer/ImageCustomizer";
+import ContainerCustomizer from "./ContainerCustomizer";
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
   components: {
-    // ContainerCustomizer,
-    ImageCustomizer,
+    ContainerCustomizer,
   },
   data: () => ({
     customPad: {

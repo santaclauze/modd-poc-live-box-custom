@@ -1,11 +1,11 @@
 <template>
   <div id="app">
     <h1>Container example</h1>
-    <CustomizerWrapper><ContainerExample /></CustomizerWrapper>
+    <ContainerCustomizerWrapper><ContainerExample /></ContainerCustomizerWrapper>
     <hr />
     <h1>Image example</h1>
 
-    <CustomizerWrapper><ImageExample /></CustomizerWrapper>
+    <ImageCustomizerWrapper><ImageExample /></ImageCustomizerWrapper>
 
   </div>
 </template>
@@ -13,14 +13,16 @@
 <script>
 
 
-import CustomizerWrapper from "@/components/CustomizerWrapper";
+import ContainerCustomizerWrapper from "./components/customizer/container/ContainerCustomizerWrapper";
+import ImageCustomizerWrapper from "./components/customizer/image/ImageCustomizerWrapper";
 import ContainerExample from "@/components/test/ContainerExample";
 import ImageExample from "@/components/test/ImageExample";
 
 export default {
   name: 'App',
   components: {
-    CustomizerWrapper,
+    ContainerCustomizerWrapper,
+    ImageCustomizerWrapper,
     ContainerExample,
     ImageExample,
   }
