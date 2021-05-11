@@ -24,7 +24,7 @@
         :style="[viewerStylesSides, { width: viewerWidthLeft + 'px'}]"
         @mousedown.prevent.stop="moveFromLeft"
     >
-      <div v-if="this.viewerWidthLeft > 0" class="height-displayer">{{this.viewerWidthLeft}}px</div>
+      <div v-if="this.viewerWidthLeft > 0" class="height-displayer">{{toPercent(this.viewerWidthLeft, this.parentWidth)}}%</div>
     </div>
     <div
         ref="draggableContainerRight"
@@ -37,7 +37,7 @@
         :style="[viewerStylesSides, { width: viewerWidthRight + 'px', left: 'unset', right: 0 }]"
         @mousedown.prevent.stop="moveFromRight"
     >
-      <div v-if="this.viewerWidthRight > 0" class="height-displayer">{{this.viewerWidthRight}}px</div>
+      <div v-if="this.viewerWidthRight > 0" class="height-displayer">{{toPercent(this.viewerWidthRight,this.parentWidth)}}%</div>
     </div>
   </div>
 </template>
@@ -64,6 +64,7 @@ function trackMouseDrag(
   document.addEventListener('mouseup', mouseUp);
 }
 
+import { toPercent } from "../../../helper";
 
 export default {
   name: "ContainerCustomizer",
@@ -72,6 +73,7 @@ export default {
     parentHeight: Number,
     parentWidth: Number,
     hasSnapToGrid: Boolean,
+    hasMirrorPadding: Boolean,
   },
   data: () => ({
     viewerWidthLeft: 0,
@@ -124,6 +126,7 @@ export default {
     }
   },
   methods: {
+    toPercent,
     makeDraggerSize: function (parentSize) {
       return ((parentSize / 2) - (parentSize / 8)) + 'px'
     },
@@ -161,6 +164,9 @@ export default {
     moveFromLeft: function (initialEvent) {
       const initialPosition = this.$refs.draggableContainerLeft.offsetLeft;
       const initialWidth = this.viewerWidthLeft;
+      if(this.hasMirrorPadding) {
+        this.moveLeftRight(initialEvent, 'left')
+      }
       trackMouseDrag(
           initialEvent,
           (dx) => {
@@ -190,6 +196,9 @@ export default {
     moveFromRight: function (initialEvent) {
       const initialPosition = this.parentWidth - this.$refs.draggableContainerRight.offsetLeft;
       const initialWidth = this.viewerWidthRight;
+      if(this.hasMirrorPadding) {
+        this.moveLeftRight(initialEvent, 'right')
+      }
       trackMouseDrag(
           initialEvent,
           (dx) => {
@@ -212,6 +221,51 @@ export default {
           },
           () => {
             if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
+          },
+      )
+    },
+    moveLeftRight: function (initialEvent, direction) {
+      const isLeft = direction === 'left';
+      const initialPosition = isLeft ? this.$refs.draggableContainerRight.offsetLeft : this.parentWidth - this.$refs.draggableContainerRight.offsetLeft;
+      const initialWidth = this.viewerWidthRight;
+      trackMouseDrag(
+          initialEvent,
+          (dx) => {
+            if(isLeft) {
+              this.$refs.draggableContainerRight.style.left = initialPosition - dx + 'px';
+            } else {
+              this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
+            }
+            // SNAP TO GRID
+            if(this.hasSnapToGrid) {
+              if(dx%4 === 0) {
+                if(isLeft) {
+                  this.viewerWidthRight = initialWidth + dx;
+                } else {
+                  this.viewerWidthLeft = initialWidth - dx;
+                }
+              }
+            } else {
+              if(isLeft) {
+                this.viewerWidthRight = initialWidth + dx;
+              } else {
+                this.viewerWidthLeft = initialWidth - dx;
+              }
+            }
+            // Do not allow dragger to go futher than its original position
+            if(isLeft ? initialPosition > this.originalDraggerPosition : initialPosition < this.originalDraggerPosition) {
+              if(isLeft) {
+                this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
+              } else {
+                this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
+              }
+              return;
+            }
+            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeight, this.viewerWidthRight, 0, this.viewerWidthLeft] })
+          },
+          () => {
+            if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
+            if(this.viewerWidthLeft < 0) { return this.viewerWidthLeft = 0 }
           },
       )
     },

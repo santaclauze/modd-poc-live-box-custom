@@ -11,6 +11,7 @@
         :parentHeight="height"
         :parentWidth="width"
         :hasSnapToGrid="hasSnapToGrid"
+        :hasMirrorPadding="hasMirrorPadding"
         @update-padding="updatePadding"
         @update-height="updateHeight"
         @update-width="updateWidth"
@@ -21,6 +22,7 @@
 <script>
 import Vue from "vue";
 import ColumnCustomizer from "./ColumnCustomizer";
+import { toPercent } from "../../../helper";
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
@@ -36,6 +38,7 @@ export default Vue.extend({
     width: 0,
     height: 0,
     hasSnapToGrid: true,
+    hasMirrorPadding: false,
   }),
   mounted() {
     this.$nextTick(() => {
@@ -46,18 +49,21 @@ export default Vue.extend({
   methods: {
     removePaddingViewers() {
     },
-    toggleSnapToGrid(e) {
+    toggleKey(e) {
       if(e.key === 'Shift') {
         this.hasSnapToGrid = !this.hasSnapToGrid
       }
+      if(e.key === 'Control') {
+        this.hasMirrorPadding = !this.hasMirrorPadding
+      }
     },
     handleMouseEnter() {
-      document.addEventListener('keydown', this.toggleSnapToGrid);
-      document.addEventListener('keyup', this.toggleSnapToGrid);
+      document.addEventListener('keydown', this.toggleKey);
+      document.addEventListener('keyup', this.toggleKey);
     },
     handleMouseLeave() {
-      document.removeEventListener('keydown', this.toggleSnapToGrid);
-      document.removeEventListener('keyup', this.toggleSnapToGrid);
+      document.removeEventListener('keydown', this.toggleKey);
+      document.removeEventListener('keyup', this.toggleKey);
     },
     updateHeight(height) {
       this.height = height;
@@ -73,9 +79,9 @@ export default Vue.extend({
     styles() {
       return {
         paddingTop: this.customPad.l[0] + 'px',
-        paddingRight: this.customPad.l[1] + 'px',
+        paddingRight: toPercent(this.customPad.l[1], this.width) + '%',
         paddingBottom: this.customPad.l[2] + 'px',
-        paddingLeft: this.customPad.l[3] + 'px',
+        paddingLeft: toPercent(this.customPad.l[3], this.width) + '%',
       };
     }
   },
