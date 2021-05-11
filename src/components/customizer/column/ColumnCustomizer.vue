@@ -15,27 +15,27 @@
     </div>
     <div
         ref="draggableContainerLeft"
-        @mousedown.prevent.stop="moveSides($event, 'left')"
+        @mousedown.prevent.stop="moveFromLeft"
         :style="[draggerLeftStyles, { left: '10px' }]"
         class="dragger"
     />
     <div
         class="container-padding-viewer"
         :style="[viewerStylesSides, { width: viewerWidthLeft + 'px'}]"
-        @mousedown.prevent.stop="moveSides($event, 'left')"
+        @mousedown.prevent.stop="moveFromLeft"
     >
       <div v-if="this.viewerWidthLeft > 0" class="height-displayer">{{this.viewerWidthLeft}}px</div>
     </div>
     <div
         ref="draggableContainerRight"
-        @mousedown.prevent.stop="moveSides($event,'right')"
+        @mousedown.prevent.stop="moveFromRight"
         :style="[draggerRightStyles, { right: '10px' }]"
         class="dragger"
     />
     <div
         class="container-padding-viewer"
         :style="[viewerStylesSides, { width: viewerWidthRight + 'px', left: 'unset', right: 0 }]"
-        @mousedown.prevent.stop="moveSides($event,'right')"
+        @mousedown.prevent.stop="moveFromRight"
     >
       <div v-if="this.viewerWidthRight > 0" class="height-displayer">{{this.viewerWidthRight}}px</div>
     </div>
@@ -158,63 +158,60 @@ export default {
           },
       )
     },
-    moveSides: function (initialEvent, direction) {
+    moveFromLeft: function (initialEvent) {
       const initialPosition = this.$refs.draggableContainerLeft.offsetLeft;
-      const initialWidthLeft = this.viewerWidthLeft;
-      const initialWidthRight = this.viewerWidthRight;
-      const isDirectionLeft = direction === 'left';
+      const initialWidth = this.viewerWidthLeft;
       trackMouseDrag(
           initialEvent,
           (dx) => {
-            const position = initialPosition + dx;
-            isDirectionLeft ?
-            this.$refs.draggableContainerLeft.style.left = position + 'px' :
-                this.$refs.draggableContainerRight.style.right = position + 'px';
+            const positionLeft = initialPosition + dx;
+            this.$refs.draggableContainerLeft.style.left = positionLeft + 'px';
+
             // SNAP TO GRID
             if(this.hasSnapToGrid) {
               if(dx%4 === 0) {
-                isDirectionLeft ?
-                this.viewerWidthLeft = initialWidthLeft + dx :
-                    this.viewerWidthRight = initialWidthRight - dx;
+                this.viewerWidthLeft = initialWidth + dx;
               }
             } else {
-              isDirectionLeft ?
-                this.viewerWidthLeft = initialWidthLeft + dx :
-                  this.viewerWidthRight = initialWidthRight - dx;
+              this.viewerWidthLeft = initialWidth + dx;
             }
             // Do not allow dragger to go futher than its original position
-            if(position < this.originalDraggerPosition) {
-              isDirectionLeft ?
-                  this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px' :
-                  this.$refs.draggableContainerRight.style.right = this.originalDraggerPosition + 'px';
+            if(positionLeft < this.originalDraggerPosition) {
+              this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
               return;
             }
             this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeight, this.viewerWidthRight, 0, this.viewerWidthLeft] })
           },
           () => {
-            // we do not want to save a negative height value. Set it to 0 if it is negative.
+            if(this.viewerWidthLeft < 0) { return this.viewerWidthLeft = 0 }
           },
       )
     },
-    moveWidth: function (initialEvent) {
-      const initialPosition = this.$refs.draggableContainerWidth.offsetLeft;
-      const initialWidth = this.parentWidth;
+    moveFromRight: function (initialEvent) {
+      const initialPosition = this.parentWidth - this.$refs.draggableContainerRight.offsetLeft;
+      const initialWidth = this.viewerWidthRight;
       trackMouseDrag(
           initialEvent,
           (dx) => {
-            const position = initialPosition + dx;
-            this.$refs.draggableContainerWidth.style.left = position + 'px';
-            this.$emit('update-width', initialWidth + dx)
-            this.$emit('update-height', this.parentHeight)
-
+            const positionRight = initialPosition - dx;
+            this.$refs.draggableContainerRight.style.right = positionRight + 'px';
+            // SNAP TO GRID
+            if(this.hasSnapToGrid) {
+              if(dx%4 === 0) {
+                this.viewerWidthRight = initialWidth - dx;
+              }
+            } else {
+              this.viewerWidthRight = initialWidth - dx;
+            }
             // Do not allow dragger to go futher than its original position
-            if(position < this.originalDraggerPosition) {
-              this.$refs.draggableContainerWidth.style.left = this.originalDraggerPosition + 'px';
+            if(initialPosition < this.originalDraggerPosition) {
+              this.$refs.draggableContainerLeft.style.right = this.originalDraggerPosition + 'px';
               return;
             }
+            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeight, this.viewerWidthRight, 0, this.viewerWidthLeft] })
           },
           () => {
-            // we do not want to save a negative height value. Set it to 0 if it is negative.
+            if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
           },
       )
     },
