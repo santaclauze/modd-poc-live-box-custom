@@ -213,7 +213,7 @@ export default {
               this.viewerWidthRight = initialWidth - dx;
             }
             // Do not allow dragger to go futher than its original position
-            if(initialPosition < this.originalDraggerPosition) {
+            if(positionRight < this.originalDraggerPosition) {
               this.$refs.draggableContainerLeft.style.right = this.originalDraggerPosition + 'px';
               return;
             }
@@ -232,6 +232,7 @@ export default {
           initialEvent,
           (dx) => {
             if(isLeft) {
+              this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
               this.$refs.draggableContainerRight.style.left = initialPosition - dx + 'px';
             } else {
               this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
