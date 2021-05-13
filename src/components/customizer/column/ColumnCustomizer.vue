@@ -140,9 +140,7 @@ export default {
             this.$refs.draggableContainer.style.top = position + 'px';
             // SNAP TO GRID
             if(this.hasSnapToGrid) {
-              if(dy%4 === 0) {
-                this.viewerHeight = initialHeight + dy;
-              }
+              this.viewerHeight = initialHeight + (dy - dy%4);
             } else {
               this.viewerHeight = initialHeight + dy;
             }
@@ -175,9 +173,7 @@ export default {
 
             // SNAP TO GRID
             if(this.hasSnapToGrid) {
-              if(dx%4 === 0) {
-                this.viewerWidthLeft = initialWidth + dx;
-              }
+              this.viewerWidthLeft = initialWidth + (dx - dx%4);
             } else {
               this.viewerWidthLeft = initialWidth + dx;
             }
@@ -206,9 +202,7 @@ export default {
             this.$refs.draggableContainerRight.style.right = positionRight + 'px';
             // SNAP TO GRID
             if(this.hasSnapToGrid) {
-              if(dx%4 === 0) {
-                this.viewerWidthRight = initialWidth - dx;
-              }
+              this.viewerWidthRight = initialWidth - (dx - dx%4);
             } else {
               this.viewerWidthRight = initialWidth - dx;
             }
@@ -237,7 +231,7 @@ export default {
             } else {
               this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
             }
-            // SNAP TO GRID
+            // SNAP TO GRID - TODO: TO BE UPDATED WITH THE CALCULATIONS LIKE THOSE ABOVE
             if(this.hasSnapToGrid) {
               if(dx%4 === 0) {
                 if(isLeft) {
