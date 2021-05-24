@@ -1,42 +1,39 @@
 <template>
   <div>
     <div
-        ref="draggableContainer"
-        @mousedown.prevent.stop="moveSize"
-        :style="[draggerStyles, { top: '10px' }]"
-        class="dragger"
-    />
-    <div
         class="container-padding-viewer"
         :style="[viewerStyles, { height: viewerHeight + 'px'}]"
         @mousedown.prevent.stop="moveSize"
     >
+      <div
+          ref="draggableContainer"
+          :style="[draggerStyles, { bottom: '-10px' }]"
+          class="dragger"
+      />
       <div v-if="this.viewerHeight > 0" class="height-displayer">{{this.viewerHeight}}px</div>
     </div>
-    <div
-        ref="draggableContainerLeft"
-        @mousedown.prevent.stop="moveFromLeft"
-        :style="[draggerLeftStyles, { left: '10px' }]"
-        class="dragger"
-    />
     <div
         class="container-padding-viewer"
         :style="[viewerStylesSides, { width: viewerWidthLeft + 'px'}]"
         @mousedown.prevent.stop="moveFromLeft"
     >
+      <div
+          ref="draggableContainerLeft"
+          :style="[draggerLeftStyles, { right: '-10px' }]"
+          class="dragger"
+      />
       <div v-if="this.viewerWidthLeft > 0" class="height-displayer">{{toPercent(this.viewerWidthLeft, this.parentWidth)}}%</div>
     </div>
-    <div
-        ref="draggableContainerRight"
-        @mousedown.prevent.stop="moveFromRight"
-        :style="[draggerRightStyles, { right: '10px' }]"
-        class="dragger"
-    />
     <div
         class="container-padding-viewer"
         :style="[viewerStylesSides, { width: viewerWidthRight + 'px', left: 'unset', right: 0 }]"
         @mousedown.prevent.stop="moveFromRight"
     >
+      <div
+          ref="draggableContainerRight"
+          :style="[draggerRightStyles, { left: '-10px' }]"
+          class="dragger"
+      />
       <div v-if="this.viewerWidthRight > 0" class="height-displayer">{{toPercent(this.viewerWidthRight,this.parentWidth)}}%</div>
     </div>
   </div>
@@ -87,23 +84,23 @@ export default {
   computed: {
     draggerStyles() {
       return {
-        height: '7px',
-        width: this.parentWidth / 4 + 'px',
-        left: this.makeDraggerSize(this.parentWidth),
+        height: '5px',
+        width: '25%',
+        left: '37.5%',
       };
     },
     draggerLeftStyles() {
       return {
         width: '5px',
-        top: this.parentHeight / 4 + 'px',
-        height: this.makeDraggerSize(this.parentHeight),
+        top: '37.5%',
+        height: '25%',
       };
     },
     draggerRightStyles() {
       return {
         width: '5px',
-        top: this.parentHeight / 4 + 'px',
-        height: this.makeDraggerSize(this.parentHeight),
+        top: '37.5%',
+        height: '25%',
       };
     },
     viewerStyles() {
@@ -137,6 +134,7 @@ export default {
           initialEvent,
           (dx, dy) => {
             const position = initialPosition + dy;
+            // Avoids bug when dragger does not stick to position accurately
             this.$refs.draggableContainer.style.top = position + 'px';
             // SNAP TO GRID
             if(this.hasSnapToGrid) {
@@ -267,6 +265,10 @@ export default {
 </script>
 
 <style scoped>
+
+.container-padding-viewer {
+  position: relative;
+}
 
 .dragger {
   border-radius: 50px;
