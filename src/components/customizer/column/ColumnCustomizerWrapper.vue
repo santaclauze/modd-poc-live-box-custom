@@ -104,7 +104,7 @@ export default Vue.extend({
   background-color: rgba(215,235,247,0.6);
 }
 
-.customizer-wrapper:hover .height-displayer {
+.customizer-wrapper:hover .padding-badge {
   display: block;
 }
 

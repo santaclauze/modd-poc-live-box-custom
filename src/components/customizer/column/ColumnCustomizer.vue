@@ -1,41 +1,26 @@
 <template>
   <div>
-    <div
-        class="container-padding-viewer"
-        :style="[viewerStyles, { height: viewerHeight + 'px'}]"
-        @mousedown.prevent.stop="moveSize"
-    >
-      <div
-          ref="draggableContainer"
-          :style="[draggerStyles, { bottom: '-10px' }]"
-          class="dragger"
-      />
-      <div v-if="this.viewerHeight > 0" class="height-displayer">{{this.viewerHeight}}px</div>
-    </div>
-    <div
-        class="container-padding-viewer"
-        :style="[viewerStylesSides, { width: viewerWidthLeft + 'px'}]"
-        @mousedown.prevent.stop="moveFromLeft"
-    >
-      <div
-          ref="draggableContainerLeft"
-          :style="[draggerLeftStyles, { right: '-10px' }]"
-          class="dragger"
-      />
-      <div v-if="this.viewerWidthLeft > 0" class="height-displayer">{{toPercent(this.viewerWidthLeft, this.parentWidth)}}%</div>
-    </div>
-    <div
-        class="container-padding-viewer"
-        :style="[viewerStylesSides, { width: viewerWidthRight + 'px', left: 'unset', right: 0 }]"
-        @mousedown.prevent.stop="moveFromRight"
-    >
-      <div
-          ref="draggableContainerRight"
-          :style="[draggerRightStyles, { left: '-10px' }]"
-          class="dragger"
-      />
-      <div v-if="this.viewerWidthRight > 0" class="height-displayer">{{toPercent(this.viewerWidthRight,this.parentWidth)}}%</div>
-    </div>
+    <PaddingViewer
+      ref="draggableContainer"
+      :viewerStyles="[viewerStyles, { height: viewerHeight + 'px' }]"
+      :draggerStyles="[draggerStyles, { bottom: '-10px' }]"
+      @move="moveSize"
+      :size="this.viewerHeight"
+    />
+    <PaddingViewer
+        ref="draggableContainerLeft"
+        :viewerStyles="[viewerStylesSides, { width: viewerWidthLeft + 'px' }]"
+        :draggerStyles="[draggerLeftStyles, { right: '-10px' }]"
+        @move="moveFromLeft"
+        :size="this.viewerWidthLeft"
+    />
+    <PaddingViewer
+        ref="draggableContainerRight"
+        :viewerStyles="[viewerStylesSides, { width: viewerWidthRight + 'px', left: 'unset', right: 0 }]"
+        :draggerStyles="[draggerRightStyles, { left: '-10px' }]"
+        @move="moveFromRight"
+        :size="this.viewerWidthRight"
+    />
   </div>
 </template>
 
@@ -62,9 +47,13 @@ function trackMouseDrag(
 }
 
 import { toPercent } from "../../../helper";
+import PaddingViewer from '../../ui/PaddingViewer';
 
 export default {
   name: "ContainerCustomizer",
+  components: {
+    PaddingViewer,
+  },
   props: {
     direction: String,
     parentHeight: Number,
@@ -128,7 +117,8 @@ export default {
       return ((parentSize / 2) - (parentSize / 8)) + 'px'
     },
     moveSize: function (initialEvent) {
-      const initialPosition = this.$refs.draggableContainer.offsetTop;
+      this.$refs.draggableContainer.style = {};
+      const initialPosition = this.$refs.draggableContainer.size;
       const initialHeight = this.viewerHeight;
       trackMouseDrag(
           initialEvent,
@@ -158,7 +148,8 @@ export default {
       )
     },
     moveFromLeft: function (initialEvent) {
-      const initialPosition = this.$refs.draggableContainerLeft.offsetLeft;
+      this.$refs.draggableContainerLeft.style = {};
+      const initialPosition = this.$refs.draggableContainerLeft.size;
       const initialWidth = this.viewerWidthLeft;
       if(this.hasMirrorPadding) {
         this.moveLeftRight(initialEvent, 'left')
@@ -188,7 +179,8 @@ export default {
       )
     },
     moveFromRight: function (initialEvent) {
-      const initialPosition = this.parentWidth - this.$refs.draggableContainerRight.offsetLeft;
+      this.$refs.draggableContainerRight.style = {};
+      const initialPosition = this.$refs.draggableContainerRight.size;
       const initialWidth = this.viewerWidthRight;
       if(this.hasMirrorPadding) {
         this.moveLeftRight(initialEvent, 'right')
@@ -266,26 +258,4 @@ export default {
 
 <style scoped>
 
-.container-padding-viewer {
-  position: relative;
-}
-
-.dragger {
-  border-radius: 50px;
-  position: absolute;
-  z-index: 1000;
-}
-
-.height-displayer {
-  position: absolute;
-  top: 45%;
-  left: 48%;
-  font-size: 13px;
-  background-color: #438ce6;
-  padding: 9px 14px;
-  border-radius: 30px;
-  color: white;
-  z-index: 1001;
-  display: none;
-}
 </style>
