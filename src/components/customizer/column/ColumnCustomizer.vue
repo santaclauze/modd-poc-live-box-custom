@@ -233,12 +233,10 @@ export default {
             }
             // SNAP TO GRID - TODO: TO BE UPDATED WITH THE CALCULATIONS LIKE THOSE ABOVE
             if(this.hasSnapToGrid) {
-              if(dx%4 === 0) {
-                if(isLeft) {
-                  this.viewerWidthRight = initialWidth + dx;
-                } else {
-                  this.viewerWidthLeft = initialWidth - dx;
-                }
+              if(isLeft) {
+                this.viewerWidthRight = initialWidth + (dx - dx%4);
+              } else {
+                this.viewerWidthLeft = initialWidth - (dx - dx%4);
               }
             } else {
               if(isLeft) {

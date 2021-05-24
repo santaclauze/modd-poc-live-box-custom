@@ -86,9 +86,7 @@ export default {
             this.$refs.draggableContainer.style.top = position + 'px';
             // SNAP TO GRID
             if(this.hasSnapToGrid) {
-              if(dy%4 === 0) {
-                this.viewerHeight = initialHeight + dy;
-              }
+              this.viewerHeight = initialHeight + dy - dy%4;
             } else {
               this.viewerHeight = initialHeight + dy;
             }
