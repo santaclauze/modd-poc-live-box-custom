@@ -78,8 +78,9 @@ export default Vue.extend({
   computed: {
     styles() {
       return {
+        width: '100%',
         paddingTop: this.customPad.l[0] + 'px',
-        paddingRight: toPercent(this.customPad.l[1], this.width) + '%',
+        paddingRight: this.customPad.l[1] + '%',
         paddingBottom: this.customPad.l[2] + 'px',
         paddingLeft: toPercent(this.customPad.l[3], this.width) + '%',
       };

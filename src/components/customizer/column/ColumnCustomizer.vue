@@ -23,10 +23,12 @@
     />
     <PaddingViewer
         ref="draggableContainerRight"
-        :viewerStyles="[viewerStylesSides, { width: viewerWidthRight + 'px', right: 0 }]"
+        :viewerStyles="[viewerStylesSides, { width: calculateSize(displayInPercent.length > 0, viewerWidthRight), right: 0 }]"
         :draggerStyles="[draggerXStyles, { left: '-10px' }]"
         @move="moveFromRight"
-        :size="this.viewerWidthRight"
+        @toggleUnit="handleToggleUnit"
+        :isPercent="displayInPercent.length > 0"
+        :size="parseInt(this.viewerWidthRight, 10)"
     />
   </div>
 </template>
@@ -74,6 +76,7 @@ export default {
     viewerHeightTop: 0,
     viewerHeightBottom: 0,
     originalDraggerPosition: 0,
+    displayInPercent: '',
   }),
   mounted() {
     this.originalDraggerPosition = this.$refs.draggableContainerTop.offsetTop;
@@ -112,6 +115,16 @@ export default {
   },
   methods: {
     toPercent,
+    calculateSize: function(isPercent, size) {
+      if(isPercent) {
+        return size + '%'
+      } else {
+        return size + 'px'
+      }
+    },
+    handleToggleUnit: function(direction) {
+      this.displayInPercent = direction;
+    },
     moveFromTop: function (initialEvent) {
       this.$refs.draggableContainerTop.style = {};
       const initialPosition = this.$refs.draggableContainerTop.size;
@@ -208,8 +221,18 @@ export default {
     },
     moveFromRight: function (initialEvent) {
       this.$refs.draggableContainerRight.style = {};
-      const initialPosition = this.$refs.draggableContainerRight.size;
-      const initialWidth = this.viewerWidthRight;
+      let initialPosition;
+      let initialWidth;
+      // if(this.displayInPercent === 'right') {
+      //   initialPosition = toPercent(this.$refs.draggableContainerRight.size, this.parentWidth);
+      //   initialWidth = toPercent(this.viewerWidthRight, this.parentWidth);
+      // } else {
+      //   initialPosition = this.$refs.draggableContainerRight.size;
+      //   initialWidth = this.viewerWidthRight;
+      // }
+      initialPosition = this.$refs.draggableContainerRight.size;
+      initialWidth = this.viewerWidthRight;
+
       if(this.hasMirrorPadding) {
         this.moveLeftRight(initialEvent, 'right')
       }
@@ -223,6 +246,9 @@ export default {
               this.viewerWidthRight = initialWidth - (dx - dx%4);
             } else {
               this.viewerWidthRight = initialWidth - dx;
+            }
+            if(this.displayInPercent === 'right') {
+              this.viewerWidthRight = toPercent(this.viewerWidthRight, this.parentWidth);
             }
             // Do not allow dragger to go futher than its original position
             if(positionRight < this.originalDraggerPosition) {

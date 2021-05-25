@@ -8,7 +8,11 @@
         :style="this.draggerStyles"
         class="dragger"
     />
-    <div v-if="this.size > 0" class="padding-badge">{{this.size}}px</div>
+    <button
+      v-if="this.size > 0"
+      class="padding-badge"
+      @click="handleClick"
+    >{{this.size}}{{ isPercent ? '%' : 'px' }}</button>
   </div>
 </template>
 
@@ -18,12 +22,17 @@ export default {
   props: {
     viewerStyles: Array,
     move: Function,
+    toggleUnit: Function,
     draggerStyles: Array,
+    isPercent: Boolean,
     size: Number
   },
   methods: {
     handleMouseDown(e) {
       this.$emit('move', e)
+    },
+    handleClick() {
+      this.$emit('toggleUnit', this.isPercent ? '' : 'right')
     }
   }
 }
