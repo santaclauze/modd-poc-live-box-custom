@@ -8,13 +8,13 @@
   >
     <div :style="styles"><slot></slot></div>
     <ColumnCustomizer
-        :parentHeight="height"
-        :parentWidth="width"
-        :hasSnapToGrid="hasSnapToGrid"
-        :hasMirrorPadding="hasMirrorPadding"
-        @update-padding="updatePadding"
-        @update-height="updateHeight"
-        @update-width="updateWidth"
+      :parentHeight="height"
+      :parentWidth="width"
+      :hasSnapToGrid="hasSnapToGrid"
+      :hasMirrorPadding="hasMirrorPadding"
+      @update-padding="updatePadding"
+      @update-height="updateHeight"
+      @update-width="updateWidth"
     />
   </div>
 </template>

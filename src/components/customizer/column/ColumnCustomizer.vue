@@ -1,23 +1,30 @@
 <template>
   <div>
     <PaddingViewer
-      ref="draggableContainer"
-      :viewerStyles="[viewerStyles, { height: viewerHeight + 'px' }]"
-      :draggerStyles="[draggerStyles, { bottom: '-10px' }]"
-      @move="moveSize"
-      :size="this.viewerHeight"
+      ref="draggableContainerTop"
+      :viewerStyles="[viewerStyles, { height: viewerHeightTop + 'px', top: 0 }]"
+      :draggerStyles="[draggerYStyles, { bottom: '-10px' }]"
+      @move="moveFromTop"
+      :size="this.viewerHeightTop"
+    />
+    <PaddingViewer
+        ref="draggableContainerBottom"
+        :viewerStyles="[viewerStyles, { height: viewerHeightBottom + 'px', bottom: 0 }]"
+        :draggerStyles="[draggerYStyles, { bottom: '10px' }]"
+        @move="moveFromBottom"
+        :size="this.viewerHeightBottom"
     />
     <PaddingViewer
         ref="draggableContainerLeft"
-        :viewerStyles="[viewerStylesSides, { width: viewerWidthLeft + 'px' }]"
-        :draggerStyles="[draggerLeftStyles, { right: '-10px' }]"
+        :viewerStyles="[viewerStylesSides, { width: viewerWidthLeft + 'px', left: 0 }]"
+        :draggerStyles="[draggerXStyles, { right: '-10px' }]"
         @move="moveFromLeft"
         :size="this.viewerWidthLeft"
     />
     <PaddingViewer
         ref="draggableContainerRight"
-        :viewerStyles="[viewerStylesSides, { width: viewerWidthRight + 'px', left: 'unset', right: 0 }]"
-        :draggerStyles="[draggerRightStyles, { left: '-10px' }]"
+        :viewerStyles="[viewerStylesSides, { width: viewerWidthRight + 'px', right: 0 }]"
+        :draggerStyles="[draggerXStyles, { left: '-10px' }]"
         @move="moveFromRight"
         :size="this.viewerWidthRight"
     />
@@ -64,28 +71,22 @@ export default {
   data: () => ({
     viewerWidthLeft: 0,
     viewerWidthRight: 0,
-    viewerHeight: 0,
+    viewerHeightTop: 0,
+    viewerHeightBottom: 0,
     originalDraggerPosition: 0,
   }),
   mounted() {
-    this.originalDraggerPosition = this.$refs.draggableContainer.offsetTop;
+    this.originalDraggerPosition = this.$refs.draggableContainerTop.offsetTop;
   },
   computed: {
-    draggerStyles() {
+    draggerYStyles() {
       return {
         height: '5px',
         width: '25%',
         left: '37.5%',
       };
     },
-    draggerLeftStyles() {
-      return {
-        width: '5px',
-        top: '37.5%',
-        height: '25%',
-      };
-    },
-    draggerRightStyles() {
+    draggerXStyles() {
       return {
         width: '5px',
         top: '37.5%',
@@ -96,7 +97,6 @@ export default {
       return {
         position: 'absolute',
         display: 'block',
-        top: 0,
         right: '1px',
         left: '1px',
       }
@@ -107,46 +107,74 @@ export default {
         display: 'block',
         top: '1px',
         bottom: '1px',
-        left: 0,
       }
     }
   },
   methods: {
     toPercent,
-    makeDraggerSize: function (parentSize) {
-      return ((parentSize / 2) - (parentSize / 8)) + 'px'
-    },
-    moveSize: function (initialEvent) {
-      this.$refs.draggableContainer.style = {};
-      const initialPosition = this.$refs.draggableContainer.size;
-      const initialHeight = this.viewerHeight;
+    moveFromTop: function (initialEvent) {
+      this.$refs.draggableContainerTop.style = {};
+      const initialPosition = this.$refs.draggableContainerTop.size;
+      const initialHeight = this.viewerHeightTop;
       trackMouseDrag(
           initialEvent,
           (dx, dy) => {
             const position = initialPosition + dy;
             // Avoids bug when dragger does not stick to position accurately
-            this.$refs.draggableContainer.style.top = position + 'px';
+            this.$refs.draggableContainerTop.style.top = position + 'px';
             // SNAP TO GRID
             if(this.hasSnapToGrid) {
-              this.viewerHeight = initialHeight + (dy - dy%4);
+              this.viewerHeightTop = initialHeight + (dy - dy%4);
             } else {
-              this.viewerHeight = initialHeight + dy;
+              this.viewerHeightTop = initialHeight + dy;
             }
 
             // Do not allow dragger to go futher than its original position
             if(position < this.originalDraggerPosition) {
-              this.$refs.draggableContainer.style.top = this.originalDraggerPosition + 'px';
+              this.$refs.draggableContainerTop.style.top = this.originalDraggerPosition + 'px';
               return;
             }
             // when we add padding top, we do not want to squash the image, so we update the height at the same time
-            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeight, this.viewerWidthRight, 0, this.viewerWidthLeft] })
+            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, 0, this.viewerWidthLeft] })
           },
           () => {
             // we do not want to save a negative height value. Set it to 0 if it is negative.
-            if(this.viewerHeight < 0) { return this.viewerHeight = 0 }
+            if(this.viewerHeightTop < 0) { return this.viewerHeightTop = 0 }
           },
       )
     },
+    moveFromBottom: function (initialEvent) {
+      this.$refs.draggableContainerBottom.style = {};
+      const initialPosition = this.$refs.draggableContainerBottom.size;
+      const initialHeight = this.viewerHeightBottom;
+      trackMouseDrag(
+          initialEvent,
+          (dx, dy) => {
+            const position = initialPosition - dy;
+            // Avoids bug when dragger does not stick to position accurately
+            this.$refs.draggableContainerBottom.style.top = position + 'px';
+            // SNAP TO GRID
+            if(this.hasSnapToGrid) {
+              this.viewerHeightBottom = initialHeight + (dy - dy%4);
+            } else {
+              this.viewerHeightBottom = initialHeight + dy;
+            }
+
+            // Do not allow dragger to go futher than its original position
+            if(position < this.originalDraggerPosition) {
+              this.$refs.draggableContainerTop.style.top = this.originalDraggerPosition + 'px';
+              return;
+            }
+            // when we add padding top, we do not want to squash the image, so we update the height at the same time
+            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, this.viewerHeightBottom, this.viewerWidthLeft] })
+          },
+          () => {
+            // we do not want to save a negative height value. Set it to 0 if it is negative.
+            if(this.viewerHeightTop < 0) { return this.viewerHeightTop = 0 }
+          },
+      )
+    },
+
     moveFromLeft: function (initialEvent) {
       this.$refs.draggableContainerLeft.style = {};
       const initialPosition = this.$refs.draggableContainerLeft.size;
@@ -171,7 +199,7 @@ export default {
               this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
               return;
             }
-            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeight, this.viewerWidthRight, 0, this.viewerWidthLeft] })
+            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, this.viewerHeightBottom, this.viewerWidthLeft] })
           },
           () => {
             if(this.viewerWidthLeft < 0) { return this.viewerWidthLeft = 0 }
@@ -201,7 +229,7 @@ export default {
               this.$refs.draggableContainerLeft.style.right = this.originalDraggerPosition + 'px';
               return;
             }
-            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeight, this.viewerWidthRight, 0, this.viewerWidthLeft] })
+            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, this.viewerHeightBottom, this.viewerWidthLeft] })
           },
           () => {
             if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
@@ -221,7 +249,6 @@ export default {
             } else {
               this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
             }
-            // SNAP TO GRID - TODO: TO BE UPDATED WITH THE CALCULATIONS LIKE THOSE ABOVE
             if(this.hasSnapToGrid) {
               if(isLeft) {
                 this.viewerWidthRight = initialWidth + (dx - dx%4);
@@ -244,7 +271,7 @@ export default {
               }
               return;
             }
-            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeight, this.viewerWidthRight, 0, this.viewerWidthLeft] })
+            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, this.viewerHeightBottom, this.viewerWidthLeft] })
           },
           () => {
             if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
