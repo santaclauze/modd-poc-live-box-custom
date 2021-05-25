@@ -10,12 +10,17 @@
     <GridContent>
       <ColumnCustomizerWrapper>
         <GridColumn>
-          <h1>Testing Column</h1>
+          <ItemCustomizerWrapper>
+            <ContainerExample />
+          </ItemCustomizerWrapper>
+          <ItemCustomizerWrapper>
+            <ContainerExample />
+          </ItemCustomizerWrapper>
         </GridColumn>
       </ColumnCustomizerWrapper>
       <ColumnCustomizerWrapper>
         <GridColumn>
-          <h1>Testing Column</h1>
+          <ItemCustomizerWrapper><ContainerExample /></ItemCustomizerWrapper>
         </GridColumn>
       </ColumnCustomizerWrapper>
     </GridContent>

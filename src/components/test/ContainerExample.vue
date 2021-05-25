@@ -17,16 +17,5 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-.example-box {
-  border: 1px solid black;
-}
 
-div {
-  background-color: purple;
-  height: 100%;
-  width: 100%;
-}
-img {
-  width: 100%;
-}
 </style>

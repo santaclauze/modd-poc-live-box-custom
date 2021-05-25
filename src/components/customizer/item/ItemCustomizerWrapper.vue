@@ -90,7 +90,6 @@ export default Vue.extend({
 .customizer-wrapper {
   position: relative;
   display: flex;
-  border: 1px solid grey;
 }
 
 .customizer-wrapper:hover .dragger {
