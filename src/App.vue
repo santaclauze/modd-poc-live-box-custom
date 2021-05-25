@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <h1>Container example</h1>
-    <ContainerCustomizerWrapper><ContainerExample /></ContainerCustomizerWrapper>
+    <ItemCustomizerWrapper><ContainerExample /></ItemCustomizerWrapper>
     <hr />
     <h1>Image example</h1>
     <ImageCustomizerWrapper><ImageExample /></ImageCustomizerWrapper>
@@ -25,7 +25,7 @@
 <script>
 
 
-import ContainerCustomizerWrapper from "./components/customizer/container/ContainerCustomizerWrapper";
+import ItemCustomizerWrapper from "./components/customizer/item/ItemCustomizerWrapper";
 import ImageCustomizerWrapper from "./components/customizer/image/ImageCustomizerWrapper";
 import ColumnCustomizerWrapper from "./components/customizer/column/ColumnCustomizerWrapper";
 import ContainerExample from "@/components/test/ContainerExample";
@@ -38,7 +38,7 @@ export default {
   components: {
     GridColumn,
     GridContent,
-    ContainerCustomizerWrapper,
+    ItemCustomizerWrapper,
     ImageCustomizerWrapper,
     ColumnCustomizerWrapper,
     ContainerExample,

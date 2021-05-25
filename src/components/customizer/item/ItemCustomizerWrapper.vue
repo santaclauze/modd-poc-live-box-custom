@@ -7,7 +7,7 @@
     @mouseenter="handleMouseEnter"
   >
     <div :style="styles"><slot></slot></div>
-    <ContainerCustomizer
+    <ItemCustomizer
       :parentHeight="height"
       :parentWidth="width"
       :hasSnapToGrid="hasSnapToGrid"
@@ -18,12 +18,12 @@
 
 <script>
 import Vue from "vue";
-import ContainerCustomizer from "./ContainerCustomizer";
+import ItemCustomizer from "./ItemCustomizer";
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
   components: {
-    ContainerCustomizer,
+    ItemCustomizer,
   },
   data: () => ({
     customPad: {
@@ -102,7 +102,7 @@ export default Vue.extend({
   background-color: rgba(215,235,247,0.6);
 }
 
-.customizer-wrapper:hover .height-displayer {
+.customizer-wrapper:hover .padding-badge {
   display: block;
 }
 
@@ -110,7 +110,5 @@ export default Vue.extend({
   cursor: grab;
   background: deepskyblue;
 }
-
-
 
 </style>

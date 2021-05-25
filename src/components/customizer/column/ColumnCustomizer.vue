@@ -20,6 +20,7 @@
         :draggerStyles="[draggerXStyles, { right: '-10px' }]"
         @move="moveFromLeft"
         :size="this.viewerWidthLeft"
+        :isToggleable=true
     />
     <PaddingViewer
         ref="draggableContainerRight"
@@ -29,6 +30,7 @@
         @toggleUnit="handleToggleUnit"
         :isPercent="displayInPercent.length > 0"
         :size="parseInt(this.viewerWidthRight, 10)"
+        :isToggleable=true
     />
   </div>
 </template>
