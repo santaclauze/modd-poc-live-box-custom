@@ -22,7 +22,6 @@
 <script>
 import Vue from "vue";
 import ColumnCustomizer from "./ColumnCustomizer";
-import { toPercent } from "../../../helper";
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
@@ -80,9 +79,9 @@ export default Vue.extend({
       return {
         width: '100%',
         paddingTop: this.customPad.l[0] + 'px',
-        paddingRight: this.customPad.l[1] + '%',
+        paddingRight: this.customPad.l[1],
         paddingBottom: this.customPad.l[2] + 'px',
-        paddingLeft: toPercent(this.customPad.l[3], this.width) + '%',
+        paddingLeft: this.customPad.l[3],
       };
     }
   },

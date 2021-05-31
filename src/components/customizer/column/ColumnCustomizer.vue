@@ -5,32 +5,37 @@
       :viewerStyles="[viewerStyles, { height: viewerHeightTop + 'px', top: 0 }]"
       :draggerStyles="[draggerYStyles, { bottom: '-10px' }]"
       @move="moveFromTop"
-      :size="this.viewerHeightTop"
+      :size="this.viewerHeightTop + 'px'"
     />
     <PaddingViewer
         ref="draggableContainerBottom"
         :viewerStyles="[viewerStyles, { height: viewerHeightBottom + 'px', bottom: 0 }]"
         :draggerStyles="[draggerYStyles, { bottom: '10px' }]"
         @move="moveFromBottom"
-        :size="this.viewerHeightBottom"
+        :size="this.viewerHeightBottom + 'px'"
     />
     <PaddingViewer
         ref="draggableContainerLeft"
-        :viewerStyles="[viewerStylesSides, { width: viewerWidthLeft + 'px', left: 0 }]"
+        :viewerStyles="[viewerStylesSides, {
+          width: calculateSize(isPercent, viewerWidthLeft, parentWidth), left: 0
+        }]"
         :draggerStyles="[draggerXStyles, { right: '-10px' }]"
         @move="moveFromLeft"
-        :size="this.viewerWidthLeft"
-        :isToggleable=true
+        @toggleUnit="handleToggleUnit"
+        :size="calculateSize(isPercent, viewerWidthLeft, parentWidth)"
+        :isUnitToggleable=true
     />
     <PaddingViewer
         ref="draggableContainerRight"
-        :viewerStyles="[viewerStylesSides, { width: calculateSize(displayInPercent.length > 0, viewerWidthRight), right: 0 }]"
+        :viewerStyles="[viewerStylesSides, {
+          width: calculateSize(isPercent, viewerWidthRight, parentWidth), right: 0
+        }]"
         :draggerStyles="[draggerXStyles, { left: '-10px' }]"
         @move="moveFromRight"
         @toggleUnit="handleToggleUnit"
-        :isPercent="displayInPercent.length > 0"
-        :size="parseInt(this.viewerWidthRight, 10)"
-        :isToggleable=true
+        :isPercent="isPercent"
+        :size="calculateSize(isPercent, viewerWidthRight, parentWidth)"
+        :isUnitToggleable=true
     />
   </div>
 </template>
@@ -67,8 +72,8 @@ export default {
   },
   props: {
     direction: String,
-    parentHeight: Number,
-    parentWidth: Number,
+    parentHeight: String,
+    parentWidth: String,
     hasSnapToGrid: Boolean,
     hasMirrorPadding: Boolean,
   },
@@ -78,7 +83,7 @@ export default {
     viewerHeightTop: 0,
     viewerHeightBottom: 0,
     originalDraggerPosition: 0,
-    displayInPercent: '',
+    isPercent: false,
   }),
   mounted() {
     this.originalDraggerPosition = this.$refs.draggableContainerTop.offsetTop;
@@ -117,15 +122,15 @@ export default {
   },
   methods: {
     toPercent,
-    calculateSize: function(isPercent, size) {
+    calculateSize: function(isPercent, viewerSize, parentSize) {
       if(isPercent) {
-        return size + '%'
+        return toPercent(viewerSize, parentSize) + '%'
       } else {
-        return size + 'px'
+        return viewerSize + 'px'
       }
     },
-    handleToggleUnit: function(direction) {
-      this.displayInPercent = direction;
+    handleToggleUnit: function() {
+      this.isPercent = !this.isPercent;
     },
     moveFromTop: function (initialEvent) {
       this.$refs.draggableContainerTop.style = {};
@@ -149,6 +154,7 @@ export default {
               this.$refs.draggableContainerTop.style.top = this.originalDraggerPosition + 'px';
               return;
             }
+
             // when we add padding top, we do not want to squash the image, so we update the height at the same time
             this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, 0, this.viewerWidthLeft] })
           },
@@ -214,7 +220,15 @@ export default {
               this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
               return;
             }
-            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, this.viewerHeightBottom, this.viewerWidthLeft] })
+            this.$emit('update-padding', {
+              breakpoint: 'l',
+              padding: [
+                this.viewerHeightTop,
+                this.viewerWidthRight,
+                this.viewerHeightBottom,
+                this.calculateSize(this.isPercent, this.viewerWidthLeft, this.parentWidth),
+              ]
+            })
           },
           () => {
             if(this.viewerWidthLeft < 0) { return this.viewerWidthLeft = 0 }
@@ -225,13 +239,6 @@ export default {
       this.$refs.draggableContainerRight.style = {};
       let initialPosition;
       let initialWidth;
-      // if(this.displayInPercent === 'right') {
-      //   initialPosition = toPercent(this.$refs.draggableContainerRight.size, this.parentWidth);
-      //   initialWidth = toPercent(this.viewerWidthRight, this.parentWidth);
-      // } else {
-      //   initialPosition = this.$refs.draggableContainerRight.size;
-      //   initialWidth = this.viewerWidthRight;
-      // }
       initialPosition = this.$refs.draggableContainerRight.size;
       initialWidth = this.viewerWidthRight;
 
@@ -249,15 +256,21 @@ export default {
             } else {
               this.viewerWidthRight = initialWidth - dx;
             }
-            if(this.displayInPercent === 'right') {
-              this.viewerWidthRight = toPercent(this.viewerWidthRight, this.parentWidth);
-            }
             // Do not allow dragger to go futher than its original position
             if(positionRight < this.originalDraggerPosition) {
               this.$refs.draggableContainerLeft.style.right = this.originalDraggerPosition + 'px';
               return;
             }
-            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, this.viewerHeightBottom, this.viewerWidthLeft] })
+
+            this.$emit('update-padding', {
+              breakpoint: 'l',
+              padding: [
+                this.viewerHeightTop,
+                this.calculateSize(this.isPercent, this.viewerWidthRight, this.parentWidth),
+                this.viewerHeightBottom,
+                this.viewerWidthLeft
+              ]
+            })
           },
           () => {
             if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }

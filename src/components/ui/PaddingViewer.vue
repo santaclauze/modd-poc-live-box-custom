@@ -9,15 +9,15 @@
         class="dragger"
     />
     <button
-      v-if="this.size > 0 && this.isToggleable"
+      v-if="parseInt(this.size, 10) && this.isUnitToggleable"
       class="padding-badge"
       @click="handleClick"
-    >{{this.size}}{{ isPercent ? '%' : 'px' }}</button>
+    >{{this.size}}</button>
     <div
-        v-if="this.size > 0 && !this.isToggleable"
+        v-if="parseInt(this.size, 10) && !this.isUnitToggleable"
         class="padding-badge"
         @click="handleClick"
-    >{{this.size}}px</div>
+    >{{this.size}}</div>
   </div>
 </template>
 
@@ -30,18 +30,18 @@ export default {
     toggleUnit: Function,
     draggerStyles: Array,
     isPercent: Boolean,
-    isToggleable: {
+    isUnitToggleable: {
       type: Boolean,
       default: false,
     },
-    size: Number
+    size: String
   },
   methods: {
     handleMouseDown(e) {
       this.$emit('move', e)
     },
     handleClick() {
-      this.$emit('toggleUnit', this.isPercent ? '' : 'right')
+      this.$emit('toggleUnit', !this.isPercent)
     }
   }
 }

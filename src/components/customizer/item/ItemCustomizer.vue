@@ -5,7 +5,7 @@
       :viewerStyles="[viewerStyles, { height: viewerHeight + 'px', top: 0 }]"
       :draggerStyles="[draggerStyles, { bottom: '-10px' }]"
       @move="moveSize"
-      :size="this.viewerHeight"
+      :size="this.viewerHeight + 'px'"
     />
   </div>
 </template>
@@ -78,9 +78,8 @@ export default {
           initialEvent,
           (dx, dy) => {
             const position = initialPosition + dy;
-            console.log(initialPosition, dy)
-
             this.$refs.draggableContainer.style.top = position + 'px';
+
             // SNAP TO GRID
             if(this.hasSnapToGrid) {
               this.viewerHeight = initialHeight + (dy - dy%4);
