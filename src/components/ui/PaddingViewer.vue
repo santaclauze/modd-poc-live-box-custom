@@ -9,12 +9,12 @@
         class="dragger"
     />
     <button
-      v-if="parseInt(this.size, 10) && this.isUnitToggleable"
+      v-if="parseInt(this.size, 10) > 0 && this.isUnitToggleable"
       class="padding-badge"
       @click="handleClick"
     >{{this.size}}</button>
     <div
-        v-if="parseInt(this.size, 10) && !this.isUnitToggleable"
+        v-if="parseInt(this.size, 10) > 0 && !this.isUnitToggleable"
         class="padding-badge"
         @click="handleClick"
     >{{this.size}}</div>

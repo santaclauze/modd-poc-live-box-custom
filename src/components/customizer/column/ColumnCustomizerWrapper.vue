@@ -34,15 +34,15 @@ export default Vue.extend({
       m: [0, 15, 0, 15],
       l: [0, 15, 0, 15]
     },
-    width: 0,
-    height: 0,
+    width: '0',
+    height: '0',
     hasSnapToGrid: true,
     hasMirrorPadding: false,
   }),
   mounted() {
     this.$nextTick(() => {
-      this.height = this.$refs.draggableContainer.clientHeight;
-      this.width = this.$refs.draggableContainer.clientWidth;
+      this.height = this.$refs.draggableContainer.clientHeight.toString(10);
+      this.width = this.$refs.draggableContainer.clientWidth.toString(10);
     })
   },
   methods: {

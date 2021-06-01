@@ -1,10 +1,7 @@
 <template>
   <div id="app">
-    <h1>Container example</h1>
+    <h1>Item example</h1>
     <ItemCustomizerWrapper><ContainerExample /></ItemCustomizerWrapper>
-    <hr />
-    <h1>Image example</h1>
-    <ImageCustomizerWrapper><ImageExample /></ImageCustomizerWrapper>
     <hr />
     <h1>Grid/Column example</h1>
     <GridContent>
@@ -20,10 +17,15 @@
       </ColumnCustomizerWrapper>
       <ColumnCustomizerWrapper>
         <GridColumn>
-          <ItemCustomizerWrapper><ContainerExample /></ItemCustomizerWrapper>
+          <ItemCustomizerWrapper>
+            <ContainerExample />
+          </ItemCustomizerWrapper>
         </GridColumn>
       </ColumnCustomizerWrapper>
     </GridContent>
+    <hr />
+    <h1>Column example</h1>
+    <ColumnCustomizerWrapper><ContainerExample /></ColumnCustomizerWrapper>
   </div>
 </template>
 
@@ -31,10 +33,8 @@
 
 
 import ItemCustomizerWrapper from "./components/customizer/item/ItemCustomizerWrapper";
-import ImageCustomizerWrapper from "./components/customizer/image/ImageCustomizerWrapper";
 import ColumnCustomizerWrapper from "./components/customizer/column/ColumnCustomizerWrapper";
 import ContainerExample from "@/components/test/ContainerExample";
-import ImageExample from "@/components/test/ImageExample";
 import GridContent from "./components/test/Grid/GridContent";
 import GridColumn from "./components/test/Grid/GridColumn";
 
@@ -44,10 +44,8 @@ export default {
     GridColumn,
     GridContent,
     ItemCustomizerWrapper,
-    ImageCustomizerWrapper,
     ColumnCustomizerWrapper,
     ContainerExample,
-    ImageExample,
   }
 }
 </script>

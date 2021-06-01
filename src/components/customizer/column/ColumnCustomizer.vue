@@ -123,6 +123,7 @@ export default {
   methods: {
     toPercent,
     calculateSize: function(isPercent, viewerSize, parentSize) {
+      if(typeof(viewerSize || parentSize) === 'string') return;
       if(isPercent) {
         return toPercent(viewerSize, parentSize) + '%'
       } else {
@@ -137,31 +138,31 @@ export default {
       const initialPosition = this.$refs.draggableContainerTop.size;
       const initialHeight = this.viewerHeightTop;
       trackMouseDrag(
-          initialEvent,
-          (dx, dy) => {
-            const position = initialPosition + dy;
-            // Avoids bug when dragger does not stick to position accurately
-            this.$refs.draggableContainerTop.style.top = position + 'px';
-            // SNAP TO GRID
-            if(this.hasSnapToGrid) {
-              this.viewerHeightTop = initialHeight + (dy - dy%4);
-            } else {
-              this.viewerHeightTop = initialHeight + dy;
-            }
+        initialEvent,
+        (dx, dy) => {
+          const position = initialPosition + dy;
+          // Avoids bug when dragger does not stick to position accurately
+          this.$refs.draggableContainerTop.style.top = position + 'px';
+          // SNAP TO GRID
+          if(this.hasSnapToGrid) {
+            this.viewerHeightTop = initialHeight + (dy - dy%4);
+          } else {
+            this.viewerHeightTop = initialHeight + dy;
+          }
 
-            // Do not allow dragger to go futher than its original position
-            if(position < this.originalDraggerPosition) {
-              this.$refs.draggableContainerTop.style.top = this.originalDraggerPosition + 'px';
-              return;
-            }
+          // Do not allow dragger to go futher than its original position
+          if(position < this.originalDraggerPosition) {
+            this.$refs.draggableContainerTop.style.top = this.originalDraggerPosition + 'px';
+            return;
+          }
 
-            // when we add padding top, we do not want to squash the image, so we update the height at the same time
-            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, 0, this.viewerWidthLeft] })
-          },
-          () => {
-            // we do not want to save a negative height value. Set it to 0 if it is negative.
-            if(this.viewerHeightTop < 0) { return this.viewerHeightTop = 0 }
-          },
+          // when we add padding top, we do not want to squash the image, so we update the height at the same time
+          this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, 0, this.viewerWidthLeft] })
+        },
+        () => {
+          // we do not want to save a negative height value. Set it to 0 if it is negative.
+          if(this.viewerHeightTop < 0) { return this.viewerHeightTop = 0 }
+        },
       )
     },
     moveFromBottom: function (initialEvent) {
@@ -169,30 +170,30 @@ export default {
       const initialPosition = this.$refs.draggableContainerBottom.size;
       const initialHeight = this.viewerHeightBottom;
       trackMouseDrag(
-          initialEvent,
-          (dx, dy) => {
-            const position = initialPosition - dy;
-            // Avoids bug when dragger does not stick to position accurately
-            this.$refs.draggableContainerBottom.style.top = position + 'px';
-            // SNAP TO GRID
-            if(this.hasSnapToGrid) {
-              this.viewerHeightBottom = initialHeight + (dy - dy%4);
-            } else {
-              this.viewerHeightBottom = initialHeight + dy;
-            }
+        initialEvent,
+        (dx, dy) => {
+          const position = initialPosition - dy;
+          // Avoids bug when dragger does not stick to position accurately
+          this.$refs.draggableContainerBottom.style.top = position + 'px';
+          // SNAP TO GRID
+          if(this.hasSnapToGrid) {
+            this.viewerHeightBottom = initialHeight + (dy - dy%4);
+          } else {
+            this.viewerHeightBottom = initialHeight + dy;
+          }
 
-            // Do not allow dragger to go futher than its original position
-            if(position < this.originalDraggerPosition) {
-              this.$refs.draggableContainerTop.style.top = this.originalDraggerPosition + 'px';
-              return;
-            }
-            // when we add padding top, we do not want to squash the image, so we update the height at the same time
-            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, this.viewerHeightBottom, this.viewerWidthLeft] })
-          },
-          () => {
-            // we do not want to save a negative height value. Set it to 0 if it is negative.
-            if(this.viewerHeightTop < 0) { return this.viewerHeightTop = 0 }
-          },
+          // Do not allow dragger to go futher than its original position
+          if(position < this.originalDraggerPosition) {
+            this.$refs.draggableContainerTop.style.top = this.originalDraggerPosition + 'px';
+            return;
+          }
+          // when we add padding top, we do not want to squash the image, so we update the height at the same time
+          this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, this.viewerHeightBottom, this.viewerWidthLeft] })
+        },
+        () => {
+          // we do not want to save a negative height value. Set it to 0 if it is negative.
+          if(this.viewerHeightTop < 0) { return this.viewerHeightTop = 0 }
+        },
       )
     },
 
@@ -204,35 +205,35 @@ export default {
         this.moveLeftRight(initialEvent, 'left')
       }
       trackMouseDrag(
-          initialEvent,
-          (dx) => {
-            const positionLeft = initialPosition + dx;
-            this.$refs.draggableContainerLeft.style.left = positionLeft + 'px';
+        initialEvent,
+        (dx) => {
+          const positionLeft = initialPosition + dx;
+          this.$refs.draggableContainerLeft.style.left = positionLeft + 'px';
 
-            // SNAP TO GRID
-            if(this.hasSnapToGrid) {
-              this.viewerWidthLeft = initialWidth + (dx - dx%4);
-            } else {
-              this.viewerWidthLeft = initialWidth + dx;
-            }
-            // Do not allow dragger to go futher than its original position
-            if(positionLeft < this.originalDraggerPosition) {
-              this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
-              return;
-            }
-            this.$emit('update-padding', {
-              breakpoint: 'l',
-              padding: [
-                this.viewerHeightTop,
-                this.viewerWidthRight,
-                this.viewerHeightBottom,
-                this.calculateSize(this.isPercent, this.viewerWidthLeft, this.parentWidth),
-              ]
-            })
-          },
-          () => {
-            if(this.viewerWidthLeft < 0) { return this.viewerWidthLeft = 0 }
-          },
+          // SNAP TO GRID
+          if(this.hasSnapToGrid) {
+            this.viewerWidthLeft = initialWidth + (dx - dx%4);
+          } else {
+            this.viewerWidthLeft = initialWidth + dx;
+          }
+          // Do not allow dragger to go futher than its original position
+          if(positionLeft < this.originalDraggerPosition) {
+            this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
+            return;
+          }
+          this.$emit('update-padding', {
+            breakpoint: 'l',
+            padding: [
+              this.viewerHeightTop,
+              this.viewerWidthRight,
+              this.viewerHeightBottom,
+              this.calculateSize(this.isPercent, this.viewerWidthLeft, this.parentWidth),
+            ]
+          })
+        },
+        () => {
+          if(this.viewerWidthLeft < 0) { return this.viewerWidthLeft = 0 }
+        },
       )
     },
     moveFromRight: function (initialEvent) {
@@ -246,35 +247,35 @@ export default {
         this.moveLeftRight(initialEvent, 'right')
       }
       trackMouseDrag(
-          initialEvent,
-          (dx) => {
-            const positionRight = initialPosition - dx;
-            this.$refs.draggableContainerRight.style.right = positionRight + 'px';
-            // SNAP TO GRID
-            if(this.hasSnapToGrid) {
-              this.viewerWidthRight = initialWidth - (dx - dx%4);
-            } else {
-              this.viewerWidthRight = initialWidth - dx;
-            }
-            // Do not allow dragger to go futher than its original position
-            if(positionRight < this.originalDraggerPosition) {
-              this.$refs.draggableContainerLeft.style.right = this.originalDraggerPosition + 'px';
-              return;
-            }
+        initialEvent,
+        (dx) => {
+          const positionRight = initialPosition - dx;
+          this.$refs.draggableContainerRight.style.right = positionRight + 'px';
+          // SNAP TO GRID
+          if(this.hasSnapToGrid) {
+            this.viewerWidthRight = initialWidth - (dx - dx%4);
+          } else {
+            this.viewerWidthRight = initialWidth - dx;
+          }
+          // Do not allow dragger to go futher than its original position
+          if(positionRight < this.originalDraggerPosition) {
+            this.$refs.draggableContainerLeft.style.right = this.originalDraggerPosition + 'px';
+            return;
+          }
 
-            this.$emit('update-padding', {
-              breakpoint: 'l',
-              padding: [
-                this.viewerHeightTop,
-                this.calculateSize(this.isPercent, this.viewerWidthRight, this.parentWidth),
-                this.viewerHeightBottom,
-                this.viewerWidthLeft
-              ]
-            })
-          },
-          () => {
-            if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
-          },
+          this.$emit('update-padding', {
+            breakpoint: 'l',
+            padding: [
+              this.viewerHeightTop,
+              this.calculateSize(this.isPercent, this.viewerWidthRight, this.parentWidth),
+              this.viewerHeightBottom,
+              this.viewerWidthLeft
+            ]
+          })
+        },
+        () => {
+          if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
+        },
       )
     },
     moveLeftRight: function (initialEvent, direction) {
@@ -282,42 +283,52 @@ export default {
       const initialPosition = isLeft ? this.$refs.draggableContainerRight.offsetLeft : this.parentWidth - this.$refs.draggableContainerRight.offsetLeft;
       const initialWidth = this.viewerWidthRight;
       trackMouseDrag(
-          initialEvent,
-          (dx) => {
+        initialEvent,
+        (dx) => {
+          if(isLeft) {
+            this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
+            this.$refs.draggableContainerRight.style.left = initialPosition - dx + 'px';
+          } else {
+            this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
+          }
+          if(this.hasSnapToGrid) {
             if(isLeft) {
-              this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
-              this.$refs.draggableContainerRight.style.left = initialPosition - dx + 'px';
+              this.viewerWidthRight = initialWidth + (dx - dx%4);
             } else {
-              this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
+              this.viewerWidthLeft = initialWidth - (dx - dx%4);
             }
-            if(this.hasSnapToGrid) {
-              if(isLeft) {
-                this.viewerWidthRight = initialWidth + (dx - dx%4);
-              } else {
-                this.viewerWidthLeft = initialWidth - (dx - dx%4);
-              }
+          } else {
+            if(isLeft) {
+              this.viewerWidthRight = initialWidth + dx;
             } else {
-              if(isLeft) {
-                this.viewerWidthRight = initialWidth + dx;
-              } else {
-                this.viewerWidthLeft = initialWidth - dx;
-              }
+              this.viewerWidthLeft = initialWidth - dx;
             }
-            // Do not allow dragger to go futher than its original position
-            if(isLeft ? initialPosition > this.originalDraggerPosition : initialPosition < this.originalDraggerPosition) {
-              if(isLeft) {
-                this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
-              } else {
-                this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
-              }
-              return;
+          }
+          // Do not allow dragger to go futher than its original position
+          if(isLeft ? initialPosition > this.originalDraggerPosition : initialPosition < this.originalDraggerPosition) {
+            if(isLeft) {
+              this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
+            } else {
+              this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
             }
-            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeightTop, this.viewerWidthRight, this.viewerHeightBottom, this.viewerWidthLeft] })
-          },
-          () => {
-            if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
-            if(this.viewerWidthLeft < 0) { return this.viewerWidthLeft = 0 }
-          },
+            return;
+          }
+          console.log(this.viewerWidthRight, this.viewerWidthLeft)
+          this.$emit('update-padding',
+            {
+              breakpoint: 'l',
+              padding: [
+                this.viewerHeightTop,
+                this.calculateSize(this.isPercent, this.viewerWidthRight, this.parentWidth),
+                this.viewerHeightBottom,
+                this.calculateSize(this.isPercent, this.viewerWidthLeft, this.parentWidth),
+              ]
+            })
+        },
+        () => {
+          if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
+          if(this.viewerWidthLeft < 0) { return this.viewerWidthLeft = 0 }
+        },
       )
     },
   }
