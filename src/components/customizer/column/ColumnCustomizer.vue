@@ -48,7 +48,12 @@ function trackMouseDrag(
     onDone,
 ) {
   function mouseMove(e) {
-    onMove(e.pageX - initEvent.pageX, e.pageY - initEvent.pageY);
+    // TODO: add crtl eventv via this method
+    onMove(
+      e.pageX - initEvent.pageX,
+      e.pageY - initEvent.pageY,
+      { ctrl: e.ctrlKey, alt: e.altKey, shift:e.shiftKey }
+    );
   }
   function mouseUp(e) {
     e.preventDefault();
@@ -144,6 +149,7 @@ export default {
           // Avoids bug when dragger does not stick to position accurately
           this.$refs.draggableContainerTop.style.top = position + 'px';
           // SNAP TO GRID
+          // TODO: make % snaptogrid round to 1
           if(this.hasSnapToGrid) {
             this.viewerHeightTop = initialHeight + (dy - dy%4);
           } else {
@@ -165,6 +171,7 @@ export default {
         },
       )
     },
+    // TODO: has a bug when parent is bigger than child
     moveFromBottom: function (initialEvent) {
       this.$refs.draggableContainerBottom.style = {};
       const initialPosition = this.$refs.draggableContainerBottom.size;
@@ -215,7 +222,7 @@ export default {
             this.viewerWidthLeft = initialWidth + (dx - dx%4);
           } else {
             this.viewerWidthLeft = initialWidth + dx;
-          }
+           }
           // Do not allow dragger to go futher than its original position
           if(positionLeft < this.originalDraggerPosition) {
             this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
@@ -284,36 +291,35 @@ export default {
       const initialWidth = this.viewerWidthRight;
       trackMouseDrag(
         initialEvent,
-        (dx) => {
-          if(isLeft) {
+        (dx, dy, { crtl, alt }) => {
+          if(isLeft || crtl) {
             this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
             this.$refs.draggableContainerRight.style.left = initialPosition - dx + 'px';
           } else {
             this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
           }
-          if(this.hasSnapToGrid) {
-            if(isLeft) {
+          if(alt) {
+            if(isLeft || crtl) {
               this.viewerWidthRight = initialWidth + (dx - dx%4);
             } else {
               this.viewerWidthLeft = initialWidth - (dx - dx%4);
             }
           } else {
-            if(isLeft) {
+            if(isLeft || crtl) {
               this.viewerWidthRight = initialWidth + dx;
             } else {
               this.viewerWidthLeft = initialWidth - dx;
             }
           }
           // Do not allow dragger to go futher than its original position
-          if(isLeft ? initialPosition > this.originalDraggerPosition : initialPosition < this.originalDraggerPosition) {
-            if(isLeft) {
+          if(isLeft || crtl ? initialPosition > this.originalDraggerPosition : initialPosition < this.originalDraggerPosition) {
+            if(isLeft || crtl) {
               this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
             } else {
               this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
             }
             return;
           }
-          console.log(this.viewerWidthRight, this.viewerWidthLeft)
           this.$emit('update-padding',
             {
               breakpoint: 'l',
@@ -331,8 +337,56 @@ export default {
         },
       )
     },
-  }
+  },
+  // moveFromRight2: makeMoveLR('right',-1),
 }
+
+// TODO: Refactor to function factory
+// TODO: try to simplify
+
+// function makeMoveFunc(side, moveBy) {
+//   return function (initialEvent) {
+//     this.$refs.draggableContainerRight.style = {};
+//     let initialPosition;
+//     let initialWidth;
+//     initialPosition = this.$refs.draggableContainerRight.size;
+//     initialWidth = this.viewerWidthRight;
+//
+//     if(this.hasMirrorPadding) {
+//       this.moveLeftRight(initialEvent, 'right')
+//     }
+//     trackMouseDrag(
+//         initialEvent,
+//         (dx) => {
+//           const positionRight = initialPosition - dx;
+//           this.$refs.draggableContainerRight.style.right = positionRight + 'px';
+//           // SNAP TO GRID
+//           if(this.hasSnapToGrid) {
+//             this.viewerWidthRight = initialWidth - (dx - dx%4);
+//           } else {
+//             this.viewerWidthRight = initialWidth - dx;
+//           }
+//           // Do not allow dragger to go futher than its original position
+//           if(positionRight < this.originalDraggerPosition) {
+//             this.$refs.draggableContainerLeft.style.right = this.originalDraggerPosition + 'px';
+//             return;
+//           }
+//
+//           this.$emit('update-padding', {
+//             breakpoint: 'l',
+//             padding: [
+//               this.viewerHeightTop,
+//               this.calculateSize(this.isPercent, this.viewerWidthRight, this.parentWidth),
+//               this.viewerHeightBottom,
+//               this.viewerWidthLeft
+//             ]
+//           })
+//         },
+//         () => {
+//           if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
+//         },
+//     )
+// }
 </script>
 
 <style scoped>

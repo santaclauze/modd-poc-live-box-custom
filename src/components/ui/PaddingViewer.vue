@@ -1,27 +1,24 @@
 <template>
   <div
-      class="container-padding-viewer"
-      :style="this.viewerStyles"
-      @mousedown.prevent.stop="handleMouseDown"
+    class="container-padding-viewer"
+    :style="this.viewerStyles"
+    @mousedown.prevent.stop="handleMouseDown"
   >
     <div
-        :style="this.draggerStyles"
-        class="dragger"
+      :style="this.draggerStyles"
+      class="dragger"
+      @mousedown.prevent.stop="handleMouseDown"
     />
     <button
-      v-if="parseInt(this.size, 10) > 0 && this.isUnitToggleable"
+      v-if="parseInt(this.size, 10) > 0"
       class="padding-badge"
       @click="handleClick"
     >{{this.size}}</button>
-    <div
-        v-if="parseInt(this.size, 10) > 0 && !this.isUnitToggleable"
-        class="padding-badge"
-        @click="handleClick"
-    >{{this.size}}</div>
   </div>
 </template>
 
 <script>
+// TODO: improve button styles
 export default {
   name: "PaddingViewer",
   props: {
@@ -41,6 +38,7 @@ export default {
       this.$emit('move', e)
     },
     handleClick() {
+      if(parseInt(this.size, 10) > 0 && !this.isUnitToggleable) return;
       this.$emit('toggleUnit', !this.isPercent)
     }
   }
@@ -57,6 +55,7 @@ export default {
   border-radius: 50px;
   position: absolute;
   z-index: 1000;
+  cursor: hand;
 }
 
 .padding-badge {

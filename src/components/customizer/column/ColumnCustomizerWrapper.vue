@@ -76,12 +76,15 @@ export default Vue.extend({
   },
   computed: {
     styles() {
+      // TODO: add 2 keys to store units of each direction and remove use of breakpoint in child, it will be global value
+      // TS Type   const pad: {size:[number,number,number,number], unit:{x:'px'|'%', y: 'px'|'%'}}
+      const pad = this.customPad.l;
       return {
         width: '100%',
-        paddingTop: this.customPad.l[0] + 'px',
-        paddingRight: this.customPad.l[1],
-        paddingBottom: this.customPad.l[2] + 'px',
-        paddingLeft: this.customPad.l[3],
+        paddingTop: pad.size[0] + (pad.unit?.y || 'px'),
+        paddingRight: pad.size[1] + (pad.unit?.x || 'px'),
+        paddingBottom: pad.size[2] + (pad.unit?.y || 'px'),
+        paddingLeft: pad.size[3] + (pad.unit?.x || 'px'),
       };
     }
   },

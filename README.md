@@ -51,3 +51,6 @@ dropshadow
 
 idea on UI?
 how do you want to connect it to api? (how do you translatio
+
+
+ADD TYPESCRIPT
