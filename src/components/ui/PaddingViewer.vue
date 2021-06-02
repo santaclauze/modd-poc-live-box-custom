@@ -51,6 +51,11 @@ export default {
   position: relative;
 }
 
+.container-padding-viewer:hover {
+  cursor: grab;
+  background: deepskyblue;
+}
+
 .dragger {
   border-radius: 50px;
   position: absolute;

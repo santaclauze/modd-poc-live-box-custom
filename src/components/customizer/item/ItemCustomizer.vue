@@ -9,21 +9,23 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
 function trackMouseDrag(
-    initEvent,
-    onMove,
-    onDone,
+    initEvent: MouseEvent,
+    // eslint-disable-next-line no-unused-vars
+    onMove: (moveX: number, number: number, object: { shift: boolean }) => void,
+    // eslint-disable-next-line no-unused-vars
+    onDone: (moveX: number, number: number) => void,
 ) {
-  function mouseMove(e) {
+  function mouseMove(e: MouseEvent) {
     onMove(
       e.pageX - initEvent.pageX,
       e.pageY - initEvent.pageY,
-      { shift:e.shiftKey }
+      { shift: e.shiftKey }
     );
   }
-  function mouseUp(e) {
+  function mouseUp(e: MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
     document.removeEventListener('mouseup', mouseUp);
@@ -36,8 +38,9 @@ function trackMouseDrag(
 }
 
 import PaddingViewer from "../../ui/PaddingViewer";
+import Vue from 'vue'
 
-export default {
+export default Vue.extend({
   name: "ContainerCustomizer",
   components: {
     PaddingViewer,
@@ -65,14 +68,15 @@ export default {
     }
   },
   methods: {
-    moveHeight: function (initialEvent) {
-      const initialPosition = this.viewerHeight;
+    moveHeight: function (initialEvent: MouseEvent) {
+      const initialPosition: number = this.viewerHeight;
       trackMouseDrag(
         initialEvent,
-        (dx, dy, {shift}) => {
+        (dx: number, dy: number, { shift }: { shift: boolean }) => {
 
           // SNAP TO GRID
-          this.viewerHeight = shift ? initialPosition + dy : initialPosition + (dy - dy % 4);
+          this.viewerHeight = shift ?
+              initialPosition + dy : initialPosition + (dy - dy % 4);
 
           this.$emit('update-padding', {
             size: [this.viewerHeight, 15, 0, 15],
@@ -88,7 +92,8 @@ export default {
       )
     },
   }
-}
+})
+
 </script>
 
 <style scoped>

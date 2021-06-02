@@ -6,10 +6,11 @@
     />
   </div>
 </template>
-<script>
+<script lang="ts">
 
 import Vue from "vue";
 import ItemCustomizer from "./ItemCustomizer";
+import {PaddingSizeUpdate} from "@/types";
 
 export default Vue.extend({
   name: "CustomizerWrapper.vue",
@@ -22,10 +23,9 @@ export default Vue.extend({
       m: [0, 15, 0, 15],
       l: [0, 15, 0, 15]
     },
-    hasSnapToGrid: true,
   }),
   methods: {
-    updatePadding(newCustomPad) {
+    updatePadding(newCustomPad: PaddingSizeUpdate) {
       this.customPad = Object.assign({}, this.customPad, {
         l: newCustomPad.size, ...newCustomPad }
       )
@@ -60,9 +60,5 @@ export default Vue.extend({
   display: block;
 }
 
-.customizer-wrapper:hover .dragger:hover {
-  cursor: grab;
-  background: deepskyblue;
-}
 
 </style>
