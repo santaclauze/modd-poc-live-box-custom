@@ -12,6 +12,7 @@
     <button
       v-if="parseInt(this.size, 10) > 0"
       class="padding-badge"
+      :style="{backgroundColor: this.isPercent ? 'green' : '#438ce6'}"
       @click="handleClick"
     >{{this.size}}</button>
   </div>
@@ -47,13 +48,30 @@ export default {
 
 <style scoped>
 
+button {
+  border-color: #438ce6;
+  cursor: pointer;
+}
+
 .container-padding-viewer {
   position: relative;
 }
 
 .container-padding-viewer:hover {
   cursor: grab;
-  background: deepskyblue;
+}
+
+.container-padding-viewer:hover .dragger {
+  visibility: visible;
+  background: blue;
+}
+
+.container-padding-viewer:hover {
+  background-color: rgba(215,235,247,0.6);
+}
+
+.container-padding-viewer:hover .padding-badge {
+  display: block;
 }
 
 .dragger {
@@ -68,7 +86,6 @@ export default {
   top: 45%;
   left: 48%;
   font-size: 13px;
-  background-color: #438ce6;
   padding: 9px 14px;
   border-radius: 30px;
   color: white;

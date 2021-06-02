@@ -1,12 +1,10 @@
 <template>
-  <div>
-    <PaddingViewer
-      :viewerStyles="[viewerStyles, { height: viewerHeight + 'px', top: 0 }]"
-      :draggerStyles="[draggerStyles]"
-      @move="moveHeight"
-      :size="this.viewerHeight + 'px'"
-    />
-  </div>
+  <PaddingViewer
+    :viewerStyles="[viewerStyles, { height: viewerHeight + 'px', top: 0 }]"
+    :draggerStyles="[draggerStyles]"
+    @move="moveHeight"
+    :size="this.viewerHeight + 'px'"
+  />
 </template>
 
 <script lang="ts">
@@ -51,7 +49,7 @@ export default Vue.extend({
   computed: {
     draggerStyles() {
       return {
-        bottom: '-10px',
+        bottom: '0',
         height: '5px',
         width: '25%',
         left: '37.5%'

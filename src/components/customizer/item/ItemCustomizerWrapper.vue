@@ -47,18 +47,5 @@ export default Vue.extend({
   display: flex;
 }
 
-.customizer-wrapper:hover .dragger {
-  visibility: visible;
-  background: blue;
-}
-
-.customizer-wrapper:hover .container-padding-viewer {
-  background-color: rgba(215,235,247,0.6);
-}
-
-.customizer-wrapper:hover .padding-badge {
-  display: block;
-}
-
 
 </style>
