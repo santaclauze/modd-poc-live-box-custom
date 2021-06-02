@@ -1,10 +1,9 @@
 <template>
   <div>
     <PaddingViewer
-      ref="draggableContainer"
       :viewerStyles="[viewerStyles, { height: viewerHeight + 'px', top: 0 }]"
-      :draggerStyles="[draggerStyles, { bottom: '-10px' }]"
-      @move="moveSize"
+      :draggerStyles="[draggerStyles]"
+      @move="moveHeight"
       :size="this.viewerHeight + 'px'"
     />
   </div>
@@ -18,7 +17,11 @@ function trackMouseDrag(
     onDone,
 ) {
   function mouseMove(e) {
-    onMove(e.pageX - initEvent.pageX, e.pageY - initEvent.pageY);
+    onMove(
+      e.pageX - initEvent.pageX,
+      e.pageY - initEvent.pageY,
+      { shift:e.shiftKey }
+    );
   }
   function mouseUp(e) {
     e.preventDefault();
@@ -39,25 +42,17 @@ export default {
   components: {
     PaddingViewer,
   },
-  props: {
-    parentHeight: Number,
-    parentWidth: Number,
-    hasSnapToGrid: Boolean,
-  },
   data: () => ({
     viewerHeight: 0,
-    originalDraggerPosition: 0,
   }),
-  mounted() {
-    this.originalDraggerPosition = this.$refs.draggableContainer.offsetTop;
-  },
   computed: {
     draggerStyles() {
       return {
+        bottom: '-10px',
         height: '5px',
         width: '25%',
-        left: '37.5%',
-      };
+        left: '37.5%'
+      }
     },
     viewerStyles() {
       return {
@@ -70,34 +65,26 @@ export default {
     }
   },
   methods: {
-    moveSize: function (initialEvent) {
-      this.$refs.draggableContainer.style = {};
-      const initialPosition = this.$refs.draggableContainer.size;
-      const initialHeight = this.viewerHeight;
+    moveHeight: function (initialEvent) {
+      const initialPosition = this.viewerHeight;
       trackMouseDrag(
-          initialEvent,
-          (dx, dy) => {
-            const position = initialPosition + dy;
-            this.$refs.draggableContainer.style.top = position + 'px';
+        initialEvent,
+        (dx, dy, {shift}) => {
 
-            // SNAP TO GRID
-            if(this.hasSnapToGrid) {
-              this.viewerHeight = initialHeight + (dy - dy%4);
-            } else {
-              this.viewerHeight = initialHeight + dy;
-            }
+          // SNAP TO GRID
+          this.viewerHeight = shift ? initialPosition + dy : initialPosition + (dy - dy % 4);
 
-            // Do not allow dragger to go futher than its original position
-            if(position < this.originalDraggerPosition) {
-              this.$refs.draggableContainer.style.top = this.originalDraggerPosition + 'px';
-              return;
-            }
-            this.$emit('update-padding', { breakpoint: 'l', padding: [this.viewerHeight, 15, 0, 15] })
-          },
-          () => {
-            // we do not want to save a negative height value. Set it to 0 if it is negative.
-            if(this.viewerHeight < 0) { return this.viewerHeight = 0 }
-          },
+          this.$emit('update-padding', {
+            size: [this.viewerHeight, 15, 0, 15],
+            unit: { x: 'px' }
+          })
+        },
+        () => {
+          // we do not want to save a negative height value. Set it to 0 if it is negative.
+          if (this.viewerHeight < 0) {
+            return this.viewerHeight = 0
+          }
+        },
       )
     },
   }

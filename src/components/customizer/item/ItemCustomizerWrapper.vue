@@ -1,22 +1,13 @@
 <template>
-  <div
-    class="customizer-wrapper"
-    ref="draggableContainer"
-    @click="removePaddingViewers"
-    @mouseleave="handleMouseLeave"
-    @mouseenter="handleMouseEnter"
-  >
+  <div class="customizer-wrapper">
     <div :style="styles"><slot></slot></div>
     <ItemCustomizer
-      :parentHeight="height"
-      :parentWidth="width"
-      :hasSnapToGrid="hasSnapToGrid"
       @update-padding="updatePadding"
     />
   </div>
 </template>
-
 <script>
+
 import Vue from "vue";
 import ItemCustomizer from "./ItemCustomizer";
 
@@ -31,55 +22,19 @@ export default Vue.extend({
       m: [0, 15, 0, 15],
       l: [0, 15, 0, 15]
     },
-    width: 0,
-    height: 0,
     hasSnapToGrid: true,
   }),
-  mounted() {
-    this.$nextTick(() => {
-      this.height = this.$refs.draggableContainer.clientHeight;
-      this.width = this.$refs.draggableContainer.clientWidth;
-    })
-  },
   methods: {
-    removePaddingViewers() {
-    },
-    toggleSnapToGrid(e) {
-      if(e.key === 'Shift') {
-        this.hasSnapToGrid = !this.hasSnapToGrid
-      }
-    },
-    handleMouseEnter() {
-      document.addEventListener('keydown', this.toggleSnapToGrid);
-      document.addEventListener('keyup', this.toggleSnapToGrid);
-    },
-    handleMouseLeave() {
-      document.removeEventListener('keydown', this.toggleSnapToGrid);
-      document.removeEventListener('keyup', this.toggleSnapToGrid);
-    },
-    updateHeight(height) {
-      this.height = height;
-    },
-    updateWidth(width) {
-      this.width = width;
-    },
-    updatePadding(args) {
-      this.customPad = Object.assign({}, this.customPad, { [args.breakpoint]: args.padding })
+    updatePadding(newCustomPad) {
+      this.customPad = Object.assign({}, this.customPad, {
+        l: newCustomPad.size, ...newCustomPad }
+      )
     }
   },
   computed: {
-    customizerStyles() {
-      return {
-        height: this.height ? this.height + 'px' : 'fit-content',
-        width: this.width ? this.width + 'px' : 'fit-content'
-      }
-    },
     styles() {
       return {
         paddingTop: this.customPad.l[0] + 'px',
-        paddingRight: this.customPad.l[1] + 'px',
-        paddingBottom: this.customPad.l[2] + 'px',
-        paddingLeft: this.customPad.l[3] + 'px',
       };
     }
   },

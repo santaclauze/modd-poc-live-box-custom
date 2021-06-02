@@ -344,49 +344,30 @@ export default {
 // TODO: Refactor to function factory
 // TODO: try to simplify
 
-// function makeMoveFunc(side, moveBy) {
-//   return function (initialEvent) {
-//     this.$refs.draggableContainerRight.style = {};
-//     let initialPosition;
-//     let initialWidth;
-//     initialPosition = this.$refs.draggableContainerRight.size;
-//     initialWidth = this.viewerWidthRight;
+// makeMoveFunc: function (side, initialEvent) {
+//   const initialPosition = this.viewerHeight;
+//   trackMouseDrag(
+//       initialEvent,
+//       (dx, dy, {shift}) => {
+//         const position = initialPosition + dy;
 //
-//     if(this.hasMirrorPadding) {
-//       this.moveLeftRight(initialEvent, 'right')
-//     }
-//     trackMouseDrag(
-//         initialEvent,
-//         (dx) => {
-//           const positionRight = initialPosition - dx;
-//           this.$refs.draggableContainerRight.style.right = positionRight + 'px';
-//           // SNAP TO GRID
-//           if(this.hasSnapToGrid) {
-//             this.viewerWidthRight = initialWidth - (dx - dx%4);
-//           } else {
-//             this.viewerWidthRight = initialWidth - dx;
-//           }
-//           // Do not allow dragger to go futher than its original position
-//           if(positionRight < this.originalDraggerPosition) {
-//             this.$refs.draggableContainerLeft.style.right = this.originalDraggerPosition + 'px';
-//             return;
-//           }
+//         // SNAP TO GRID
+//         this.viewerHeight = shift ? initialPosition + dy : initialPosition + (dy - dy % 4);
 //
-//           this.$emit('update-padding', {
-//             breakpoint: 'l',
-//             padding: [
-//               this.viewerHeightTop,
-//               this.calculateSize(this.isPercent, this.viewerWidthRight, this.parentWidth),
-//               this.viewerHeightBottom,
-//               this.viewerWidthLeft
-//             ]
-//           })
-//         },
-//         () => {
-//           if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
-//         },
-//     )
-// }
+//         // Do not allow dragger to go futher than its original position
+//         if (position < 0) {
+//           return this.viewerHeight = 0;
+//         }
+//         this.$emit('update-padding', {breakpoint: 'l', padding: [this.viewerHeight, 15, 0, 15]})
+//       },
+//       () => {
+//         // we do not want to save a negative height value. Set it to 0 if it is negative.
+//         if (this.viewerHeight < 0) {
+//           return this.viewerHeight = 0
+//         }
+//       },
+//   )
+// },
 </script>
 
 <style scoped>
