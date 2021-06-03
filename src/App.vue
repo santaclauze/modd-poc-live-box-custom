@@ -3,29 +3,29 @@
     <h1>Item example</h1>
     <ItemCustomizerWrapper><ContainerExample /></ItemCustomizerWrapper>
     <hr />
-<!--    <h1>Grid/Column example</h1>-->
-<!--    <GridContent>-->
-<!--      <ColumnCustomizerWrapper>-->
-<!--        <GridColumn>-->
-<!--          <ItemCustomizerWrapper>-->
-<!--            <ContainerExample />-->
-<!--          </ItemCustomizerWrapper>-->
-<!--          <ItemCustomizerWrapper>-->
-<!--            <ContainerExample />-->
-<!--          </ItemCustomizerWrapper>-->
-<!--        </GridColumn>-->
-<!--      </ColumnCustomizerWrapper>-->
-<!--      <ColumnCustomizerWrapper>-->
-<!--        <GridColumn>-->
-<!--          <ItemCustomizerWrapper>-->
-<!--            <ContainerExample />-->
-<!--          </ItemCustomizerWrapper>-->
-<!--        </GridColumn>-->
-<!--      </ColumnCustomizerWrapper>-->
-<!--    </GridContent>-->
-<!--    <hr />-->
-<!--    <h1>Column example</h1>-->
-<!--    <ColumnCustomizerWrapper><ContainerExample /></ColumnCustomizerWrapper>-->
+    <h1>Grid/Column example</h1>
+    <GridContent>
+      <ColumnCustomizerWrapper>
+        <GridColumn>
+          <ItemCustomizerWrapper>
+            <ContainerExample />
+          </ItemCustomizerWrapper>
+          <ItemCustomizerWrapper>
+            <ContainerExample />
+          </ItemCustomizerWrapper>
+        </GridColumn>
+      </ColumnCustomizerWrapper>
+      <ColumnCustomizerWrapper>
+        <GridColumn>
+          <ItemCustomizerWrapper>
+            <ContainerExample />
+          </ItemCustomizerWrapper>
+        </GridColumn>
+      </ColumnCustomizerWrapper>
+    </GridContent>
+    <hr />
+    <h1>Column example</h1>
+    <ColumnCustomizerWrapper><ContainerExample /></ColumnCustomizerWrapper>
   </div>
 </template>
 
@@ -33,18 +33,18 @@
 
 
 import ItemCustomizerWrapper from "./components/customizer/item/ItemCustomizerWrapper";
-// import ColumnCustomizerWrapper from "./components/customizer/column/ColumnCustomizerWrapper";
+import ColumnCustomizerWrapper from "./components/customizer/column/ColumnCustomizerWrapper";
 import ContainerExample from "@/components/test/ContainerExample";
-// import GridContent from "./components/test/Grid/GridContent";
-// import GridColumn from "./components/test/Grid/GridColumn";
+import GridContent from "./components/test/Grid/GridContent";
+import GridColumn from "./components/test/Grid/GridColumn";
 
 export default {
   name: 'App',
   components: {
-    // GridColumn,
-    // GridContent,
+    GridColumn,
+    GridContent,
     ItemCustomizerWrapper,
-    // ColumnCustomizerWrapper,
+    ColumnCustomizerWrapper,
     ContainerExample,
   }
 }
