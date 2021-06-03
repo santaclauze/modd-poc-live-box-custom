@@ -42,29 +42,6 @@ export default {
       if(parseInt(this.size, 10) > 0 && !this.isUnitToggleable) return;
       this.$emit('toggleUnit', !this.isPercent)
     },
-    // moveFromTop: function (initialEvent) {
-    //   const initialPosition = this.viewerHeightTop;
-    //   trackMouseDrag(
-    //       initialEvent,
-    //       (dx, dy, { shift }) => {
-    //
-    //         // SNAP TO GRID
-    //         this.viewerHeightTop = shift ?
-    //             initialPosition + dy : initialPosition + (dy - dy % 4);
-    //
-    //         this.$emit('update-padding', {
-    //           size: [this.viewerHeightTop, this.viewerWidthRight, 0, this.viewerWidthLeft],
-    //           unit: { x: 'px' }
-    //         })
-    //       },
-    //       () => {
-    //         // we do not want to save a negative height value. Set it to 0 if it is negative.
-    //         if(this.viewerHeightTop < 0) {
-    //           return this.viewerHeightTop = 0
-    //         }
-    //       },
-    //   )
-    // },
   }
 }
 </script>

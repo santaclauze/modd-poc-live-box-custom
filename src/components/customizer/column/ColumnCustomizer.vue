@@ -1,41 +1,36 @@
 <template>
   <div>
     <PaddingViewer
-      ref="draggableContainerTop"
       :viewerStyles="[viewerStyles, { height: size.top + 'px', top: 0 }]"
       :draggerStyles="[draggerYStyles, { bottom: '-10px' }]"
-      @move="moveFromTop"
       :size="size.top + 'px'"
+      @move="moveFromTop"
     />
     <PaddingViewer
-        ref="draggableContainerBottom"
         :viewerStyles="[viewerStyles, { height: size.bottom + 'px', bottom: 0 }]"
         :draggerStyles="[draggerYStyles, { bottom: '10px' }]"
-        @move="moveFromBottom"
         :size="size.bottom + 'px'"
+        @move="moveFromBottom"
     />
     <PaddingViewer
-        ref="draggableContainerLeft"
         :viewerStyles="[viewerStylesSides, {
           width: calculateSize(isPercent, size.left, parentWidth) + 'px', left: 0
         }]"
         :draggerStyles="[draggerXStyles, { right: '-10px' }]"
-        @move="moveFromLeft"
-        @toggleUnit="handleToggleUnit"
         :size="calculateSize(isPercent, size.left, parentWidth) + 'px'"
         :isUnitToggleable=true
+        @move="moveFromLeft"
+        @toggleUnit="handleToggleUnit"
     />
     <PaddingViewer
-        ref="draggableContainerRight"
         :viewerStyles="[viewerStylesSides, {
           width: calculateSize(isPercent, size.right, parentWidth) + 'px', right: 0
         }]"
         :draggerStyles="[draggerXStyles, { left: '-10px' }]"
-        @move="moveFromRight"
-        @toggleUnit="handleToggleUnit"
-        :isPercent="isPercent"
         :size="calculateSize(isPercent, size.right, parentWidth) + 'px'"
         :isUnitToggleable=true
+        @move="moveFromRight"
+        @toggleUnit="handleToggleUnit"
     />
   </div>
 </template>
@@ -123,7 +118,6 @@ export default {
   methods: {
     toPercent,
     calculateSize: function(isPercent, viewerSize, parentSize) {
-      // if(typeof(viewerSize || parentSize) === 'string') return;
       if(isPercent) {
         return toPercent(viewerSize, parentSize)
       } else {
@@ -181,22 +175,24 @@ export default {
     },
 
     moveFromLeft: function (initialEvent) {
-      const initialPosition = this.size.left;
-      // if(this.hasMirrorPadding) {
-      //   this.moveLeftRight(initialEvent, 'left')
-      // }
+      const initialPositionLeft = this.size.left;
+      const initialPositionRight = this.size.right;
       trackMouseDrag(
         initialEvent,
-        (dx, dy, { shift }) => {
-
+        (dx, dy, { shift, ctrl }) => {
           // SNAP TO GRID
           this.size.left = shift ?
-              initialPosition + dx : initialPosition + (dx - dx % 4);
+              initialPositionLeft + dx : initialPositionLeft + (dx - dx % 4);
+
+          if(ctrl) {
+            this.size.right = shift ?
+                initialPositionRight + dx : initialPositionRight + (dx - dx % 4);
+          }
 
           this.$emit('update-padding', {
             size: [
               this.size.top,
-              this.size.right,
+              ctrl ? this.calculateSize(this.isPercent, this.size.right, this.parentWidth) : this.size.right,
               this.size.bottom,
               this.calculateSize(this.isPercent, this.size.left, this.parentWidth),
             ],
@@ -209,23 +205,26 @@ export default {
       )
     },
     moveFromRight: function (initialEvent) {
-      const initialPosition = this.size.right;
-      // if(this.hasMirrorPadding) {
-      //   this.moveLeftRight(initialEvent, 'right')
-      // }
+      const initialPositionLeft = this.size.left;
+      const initialPositionRight = this.size.right;
       trackMouseDrag(
         initialEvent,
-          (dx, dy, { shift }) => {
+          (dx, dy, { shift, ctrl }) => {
             // SNAP TO GRID
             this.size.right = shift ?
-                initialPosition - dx : initialPosition - (dx - dx % 4);
+                initialPositionRight - dx : initialPositionRight - (dx - dx % 4);
+
+            if(ctrl) {
+              this.size.left = shift ?
+                  initialPositionLeft - dx : initialPositionLeft - (dx - dx % 4);
+            }
 
           this.$emit('update-padding', {
             size: [
               this.size.top,
               this.calculateSize(this.isPercent, this.size.right, this.parentWidth),
               this.size.bottom,
-              this.size.left
+              ctrl ? this.calculateSize(this.isPercent, this.size.left, this.parentWidth) : this.size.left,
             ],
             unit: { x: this.isPercent ? '%' : 'px' }
           })
@@ -235,89 +234,8 @@ export default {
         },
       )
     },
-    moveLeftRight: function (initialEvent, direction) {
-      const isLeft = direction === 'left';
-      const initialPosition = isLeft ? this.$refs.draggableContainerRight.offsetLeft : this.parentWidth - this.$refs.draggableContainerRight.offsetLeft;
-      const initialWidth = this.viewerWidthRight;
-      trackMouseDrag(
-        initialEvent,
-        (dx, dy, { crtl, alt }) => {
-          if(isLeft || crtl) {
-            this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
-            this.$refs.draggableContainerRight.style.left = initialPosition - dx + 'px';
-          } else {
-            this.$refs.draggableContainerLeft.style.left = initialPosition - dx + 'px';
-          }
-          if(alt) {
-            if(isLeft || crtl) {
-              this.viewerWidthRight = initialWidth + (dx - dx%4);
-            } else {
-              this.viewerWidthLeft = initialWidth - (dx - dx%4);
-            }
-          } else {
-            if(isLeft || crtl) {
-              this.viewerWidthRight = initialWidth + dx;
-            } else {
-              this.viewerWidthLeft = initialWidth - dx;
-            }
-          }
-          // Do not allow dragger to go futher than its original position
-          if(isLeft || crtl ? initialPosition > this.originalDraggerPosition : initialPosition < this.originalDraggerPosition) {
-            if(isLeft || crtl) {
-              this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
-            } else {
-              this.$refs.draggableContainerLeft.style.left = this.originalDraggerPosition + 'px';
-            }
-            return;
-          }
-          this.$emit('update-padding',
-            {
-              breakpoint: 'l',
-              padding: [
-                this.viewerHeightTop,
-                this.calculateSize(this.isPercent, this.viewerWidthRight, this.parentWidth),
-                this.viewerHeightBottom,
-                this.calculateSize(this.isPercent, this.viewerWidthLeft, this.parentWidth),
-              ]
-            })
-        },
-        () => {
-          if(this.viewerWidthRight < 0) { return this.viewerWidthRight = 0 }
-          if(this.viewerWidthLeft < 0) { return this.viewerWidthLeft = 0 }
-        },
-      )
-    },
   },
-  // moveFromRight2: makeMoveLR('right',-1),
 }
-
-// TODO: Refactor to function factory
-// TODO: try to simplify
-
-// makeMoveFunc: function (side, initialEvent) {
-//   const initialPosition = this.viewerHeight;
-//   trackMouseDrag(
-//       initialEvent,
-//       (dx, dy, {shift}) => {
-//         const position = initialPosition + dy;
-//
-//         // SNAP TO GRID
-//         this.viewerHeight = shift ? initialPosition + dy : initialPosition + (dy - dy % 4);
-//
-//         // Do not allow dragger to go futher than its original position
-//         if (position < 0) {
-//           return this.viewerHeight = 0;
-//         }
-//         this.$emit('update-padding', {breakpoint: 'l', padding: [this.viewerHeight, 15, 0, 15]})
-//       },
-//       () => {
-//         // we do not want to save a negative height value. Set it to 0 if it is negative.
-//         if (this.viewerHeight < 0) {
-//           return this.viewerHeight = 0
-//         }
-//       },
-//   )
-// },
 </script>
 
 <style scoped>
