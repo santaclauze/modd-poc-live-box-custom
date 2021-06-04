@@ -61,11 +61,6 @@ button {
   cursor: grab;
 }
 
-.container-padding-viewer:hover .dragger {
-  visibility: visible;
-  background: blue;
-}
-
 .container-padding-viewer:hover {
   background-color: rgba(215,235,247,0.6);
 }

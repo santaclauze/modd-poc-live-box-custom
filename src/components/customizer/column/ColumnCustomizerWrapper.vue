@@ -72,5 +72,10 @@ export default Vue.extend({
   border: 1px solid grey;
 }
 
+.customizer-wrapper:hover .dragger {
+  visibility: visible;
+  background: blue;
+}
+
 
 </style>

@@ -52,5 +52,11 @@ export default Vue.extend({
   display: flex;
 }
 
+.customizer-wrapper:hover .dragger {
+  visibility: visible;
+  background: blue;
+}
+
+
 
 </style>

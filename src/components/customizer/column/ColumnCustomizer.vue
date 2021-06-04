@@ -19,6 +19,7 @@
         :draggerStyles="[draggerXStyles, { right: '-10px' }]"
         :size="calculateSize(isPercent, size.left, parentWidth) + 'px'"
         :isUnitToggleable=true
+        :isPercent="isPercent"
         @move="moveFromLeft"
         @toggleUnit="handleToggleUnit"
     />
@@ -29,6 +30,7 @@
         :draggerStyles="[draggerXStyles, { left: '-10px' }]"
         :size="calculateSize(isPercent, size.right, parentWidth) + 'px'"
         :isUnitToggleable=true
+        :isPercent="isPercent"
         @move="moveFromRight"
         @toggleUnit="handleToggleUnit"
     />
