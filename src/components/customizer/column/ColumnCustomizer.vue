@@ -116,7 +116,7 @@ export default {
               initialPosition + dy : initialPosition + (dy - dy % 4);
           this.$emit('update-padding', {
             // top and bottom are always expressed in PX
-            size: [this.makeSize('px', this.size.top), this.size.right, 0, this.size.left],
+            size: [this.makeSize('px', this.size.top), this.size.right, this.size.bottom, this.size.left],
           })
         },
         () => {
