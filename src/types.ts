@@ -1,6 +1,5 @@
 export type PaddingSizeUpdate = {
     size: [number, number, number, number],
-    unit: { x: 'px'|'%', y: 'px'|'%'}
 }
 
 export type CustomPadding = {

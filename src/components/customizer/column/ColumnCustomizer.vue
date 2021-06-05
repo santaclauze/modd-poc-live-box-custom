@@ -1,8 +1,7 @@
 <template>
   <div>
-    <PaddingViewer
+    <DoublePaddingViewer
       :viewerStyles="[viewerStyles, { height: size.top + 'px', top: 0 }]"
-      :draggerStyles="[draggerYStyles, { bottom: '-10px' }]"
       :size="size.top + 'px'"
       @move="moveFromTop"
     />
@@ -14,67 +13,44 @@
     />
     <PaddingViewer
         :viewerStyles="[viewerStylesSides, {
-          width: calculateSize(isPercent, size.left, parentWidth) + 'px', left: 0
+          width: makeSize(unit, size.left, parentWidth), left: 0
         }]"
         :draggerStyles="[draggerXStyles, { right: '-10px' }]"
-        :size="calculateSize(isPercent, size.left, parentWidth) + 'px'"
+        :size="makeSize(unit, size.left, parentWidth)"
         :isUnitToggleable=true
-        :isPercent="isPercent"
+        :unit="unit"
         @move="moveFromLeft"
         @toggleUnit="handleToggleUnit"
     />
     <PaddingViewer
         :viewerStyles="[viewerStylesSides, {
-          width: calculateSize(isPercent, size.right, parentWidth) + 'px', right: 0
+          width: makeSize(unit, size.right, parentWidth), right: 0
         }]"
         :draggerStyles="[draggerXStyles, { left: '-10px' }]"
-        :size="calculateSize(isPercent, size.right, parentWidth) + 'px'"
+        :size="makeSize(unit, size.right, parentWidth)"
         :isUnitToggleable=true
-        :isPercent="isPercent"
+        :unit="unit"
         @move="moveFromRight"
         @toggleUnit="handleToggleUnit"
     />
   </div>
 </template>
 
-<script>
+<script lang="ts">
 
-function trackMouseDrag(
-    initEvent,
-    onMove,
-    onDone,
-) {
-  function mouseMove(e) {
-    // TODO: add crtl eventv via this method
-    onMove(
-      e.pageX - initEvent.pageX,
-      e.pageY - initEvent.pageY,
-      { ctrl: e.ctrlKey, alt: e.altKey, shift:e.shiftKey }
-    );
-  }
-  function mouseUp(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    document.removeEventListener('mouseup', mouseUp);
-    document.removeEventListener('mousemove', mouseMove);
-    onDone(e.pageX - initEvent.pageX, e.pageY - initEvent.pageY);
-    return false;
-  }
-  document.addEventListener('mousemove', mouseMove);
-  document.addEventListener('mouseup', mouseUp);
-}
-
-import { toPercent } from "../../../helper";
+import {toPercent, trackMouseDrag} from "../../../helper";
 import PaddingViewer from '../../ui/PaddingViewer';
+import DoublePaddingViewer from '../../ui/DoublePaddingViewer';
 
 export default {
   name: "ContainerCustomizer",
   components: {
     PaddingViewer,
+    DoublePaddingViewer,
   },
   props: {
-    parentHeight: String,
-    parentWidth: String,
+    parentHeight: Number,
+    parentWidth: Number,
   },
   data: () => ({
     size: {
@@ -83,7 +59,7 @@ export default {
       bottom: 0,
       left: 0,
     },
-    isPercent: false,
+    unit: 'px',
   }),
   computed: {
     draggerYStyles() {
@@ -119,17 +95,17 @@ export default {
   },
   methods: {
     toPercent,
-    calculateSize: function(isPercent, viewerSize, parentSize) {
-      if(isPercent) {
-        return toPercent(viewerSize, parentSize)
+    makeSize: function(unit: 'px'|'%', viewerSize: number, parentSize?: number): string {
+      if(unit === '%' && parentSize) {
+        return toPercent(viewerSize, parentSize) + unit
       } else {
-        return viewerSize
+        return viewerSize + unit
       }
     },
-    handleToggleUnit: function() {
-      this.isPercent = !this.isPercent;
+    handleToggleUnit: function(): void {
+      this.unit = this.unit === 'px' ? '%' : 'px';
     },
-    moveFromTop: function (initialEvent) {
+    moveFromTop: function (initialEvent: MouseEvent) {
       const initialPosition = this.size.top;
       trackMouseDrag(
         initialEvent,
@@ -138,10 +114,9 @@ export default {
           // SNAP TO GRID
           this.size.top = shift ?
               initialPosition + dy : initialPosition + (dy - dy % 4);
-
           this.$emit('update-padding', {
-            size: [this.size.top, this.size.right, 0, this.size.left],
-            unit: { x: 'px' }
+            // top and bottom are always expressed in PX
+            size: [this.makeSize('px', this.size.top), this.size.right, 0, this.size.left],
           })
         },
         () => {
@@ -153,7 +128,7 @@ export default {
       )
     },
     // TODO: has a bug when parent is bigger than child
-    moveFromBottom: function (initialEvent) {
+    moveFromBottom: function (initialEvent: MouseEvent) {
       const initialPosition = this.size.bottom;
       trackMouseDrag(
         initialEvent,
@@ -163,8 +138,8 @@ export default {
               initialPosition + dy : initialPosition + (dy - dy % 4);
 
           this.$emit('update-padding', {
-            size: [this.size.top, this.size.right, this.size.bottom, this.size.left],
-            unit: { x: 'px' }
+            // top and bottom are always expressed in PX
+            size: [this.size.top, this.size.right, this.makeSize('px', this.size.bottom), this.size.left],
           })
         },
         () => {
@@ -176,7 +151,7 @@ export default {
       )
     },
 
-    moveFromLeft: function (initialEvent) {
+    moveFromLeft: function (initialEvent: MouseEvent) {
       const initialPositionLeft = this.size.left;
       const initialPositionRight = this.size.right;
       trackMouseDrag(
@@ -194,11 +169,10 @@ export default {
           this.$emit('update-padding', {
             size: [
               this.size.top,
-              ctrl ? this.calculateSize(this.isPercent, this.size.right, this.parentWidth) : this.size.right,
+              ctrl ? this.makeSize(this.unit, this.size.right, this.parentWidth) : this.size.right,
               this.size.bottom,
-              this.calculateSize(this.isPercent, this.size.left, this.parentWidth),
+              this.makeSize(this.unit, this.size.left, this.parentWidth),
             ],
-            unit: { x: this.isPercent ? '%' : 'px' }
           })
         },
         () => {
@@ -206,7 +180,7 @@ export default {
         },
       )
     },
-    moveFromRight: function (initialEvent) {
+    moveFromRight: function (initialEvent: MouseEvent) {
       const initialPositionLeft = this.size.left;
       const initialPositionRight = this.size.right;
       trackMouseDrag(
@@ -224,11 +198,10 @@ export default {
           this.$emit('update-padding', {
             size: [
               this.size.top,
-              this.calculateSize(this.isPercent, this.size.right, this.parentWidth),
+              this.makeSize(this.unit, this.size.right, this.parentWidth),
               this.size.bottom,
-              ctrl ? this.calculateSize(this.isPercent, this.size.left, this.parentWidth) : this.size.left,
+              ctrl ? this.makeSize(this.unit, this.size.left, this.parentWidth) : this.size.left,
             ],
-            unit: { x: this.isPercent ? '%' : 'px' }
           })
         },
         () => {

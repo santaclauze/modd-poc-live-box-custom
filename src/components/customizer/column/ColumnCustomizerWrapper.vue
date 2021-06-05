@@ -32,18 +32,17 @@ export default Vue.extend({
       x: 'px',
       y: 'px',
     },
-    width: '0',
-    height: '0',
+    width: 0,
+    height: 0,
   }),
   mounted() {
     this.$nextTick(() => {
-      this.height = this.$refs.draggableContainer.clientHeight.toString(10);
-      this.width = this.$refs.draggableContainer.clientWidth.toString(10);
+      this.height = this.$refs.draggableContainer.clientHeight;
+      this.width = this.$refs.draggableContainer.clientWidth;
     })
   },
   methods: {
     updatePadding(newCustomPad: PaddingSizeUpdate) {
-      console.log(newCustomPad)
       this.customPad = Object.assign({}, this.customPad, {
         // replace l with the global breakpoint
         l: newCustomPad.size, ...newCustomPad }
@@ -55,10 +54,10 @@ export default Vue.extend({
       const pad = this.customPad.l;
       return {
         width: '100%',
-        paddingTop: pad[0] + (this.unit?.y || 'px'),
-        paddingRight: pad[1] + (this.unit?.x || 'px'),
-        paddingBottom: pad[2] + (this.unit?.y || 'px'),
-        paddingLeft: pad[3] + (this.unit?.x || 'px'),
+        paddingTop: pad[0],
+        paddingRight: pad[1],
+        paddingBottom: pad[2],
+        paddingLeft: pad[3],
       };
     }
   },

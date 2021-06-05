@@ -6,8 +6,13 @@
   >
     <div
       :style="this.draggerStyles"
-      class="dragger"
+      class="dragger dragger-left"
       @mousedown.prevent.stop="handleMouseDown"
+    />
+    <div
+        :style="this.draggerStyles"
+        class="dragger dragger-right"
+        @mousedown.prevent.stop="handleMouseDown"
     />
     <button
       v-if="parseInt(this.size, 10) > 0"
@@ -77,7 +82,19 @@ button {
   position: absolute;
   z-index: 1000;
   cursor: hand;
+  height: 5px;
+  width: 15%;
+  bottom: -10px;
 }
+
+.dragger-left {
+  left: 20%;
+}
+
+.dragger-right {
+  right: 20%;
+}
+
 
 .padding-badge {
   position: absolute;

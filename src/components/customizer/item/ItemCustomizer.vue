@@ -9,34 +9,9 @@
 
 <script lang="ts">
 
-function trackMouseDrag(
-    initEvent: MouseEvent,
-    // eslint-disable-next-line no-unused-vars
-    onMove: (moveX: number, number: number, object: { shift: boolean }) => void,
-    // eslint-disable-next-line no-unused-vars
-    onDone: (moveX: number, number: number) => void,
-) {
-  function mouseMove(e: MouseEvent) {
-    onMove(
-      e.pageX - initEvent.pageX,
-      e.pageY - initEvent.pageY,
-      { shift: e.shiftKey }
-    );
-  }
-  function mouseUp(e: MouseEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    document.removeEventListener('mouseup', mouseUp);
-    document.removeEventListener('mousemove', mouseMove);
-    onDone(e.pageX - initEvent.pageX, e.pageY - initEvent.pageY);
-    return false;
-  }
-  document.addEventListener('mousemove', mouseMove);
-  document.addEventListener('mouseup', mouseUp);
-}
-
 import PaddingViewer from "../../ui/PaddingViewer";
 import Vue from 'vue'
+import {trackMouseDrag} from "@/helper";
 
 export default Vue.extend({
   name: "ContainerCustomizer",
@@ -49,10 +24,11 @@ export default Vue.extend({
   computed: {
     draggerStyles() {
       return {
-        bottom: '0',
+        bottom: '-10px',
         height: '5px',
-        width: '25%',
-        left: '37.5%'
+        width: '10%',
+        // based on above width
+        left: (100 - 10) / 2 + '%'
       }
     },
     viewerStyles() {
